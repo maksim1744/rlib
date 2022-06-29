@@ -2,7 +2,7 @@
 name = "rlib_io"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/maksim1744"
+repository = "https://github.com/maksim1744/rlib"
 license = "MIT"
 
 [dependencies]
