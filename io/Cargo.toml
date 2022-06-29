@@ -1,0 +1,9 @@
+[package]
+name = "rlib_io"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/maksim1744"
+license = "MIT"
+
+[dependencies]
+rlib_integer = { path = "../integer" }
