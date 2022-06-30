@@ -42,7 +42,7 @@ macro_rules! integer {
             integer_common!($it, $ut, $len);
 
             fn unsigned_abs(self) -> Self::Unsigned {
-                self.overflowing_abs().0 as Self::Unsigned
+                Self::unsigned_abs(self)
             }
         }
 

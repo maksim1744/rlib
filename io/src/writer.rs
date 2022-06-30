@@ -21,10 +21,14 @@ impl Writer {
 
     pub fn write<T: Writable>(&mut self, t: &T) {
         t.write(self);
+        #[cfg(debug_assertions)]
+        self.flush();
     }
 
     pub fn write_char(&mut self, c: char) {
         self.write_bytes(&[c as u8]);
+        #[cfg(debug_assertions)]
+        self.flush();
     }
 
     fn flush(&mut self) {
@@ -71,6 +75,20 @@ impl Writable for String {
     fn write(&self, writer: &mut Writer) {
         for chunk in self.as_bytes().chunks(Writer::BUF_SIZE) {
             writer.write_bytes(chunk);
+        }
+    }
+}
+
+impl<T> Writable for Vec<T>
+where
+    T: Writable,
+{
+    fn write(&self, writer: &mut Writer) {
+        for (i, value) in self.iter().enumerate() {
+            if i != 0 {
+                writer.write_char(' ');
+            }
+            writer.write(value);
         }
     }
 }
@@ -124,3 +142,27 @@ write_unsigned!(u32);
 write_unsigned!(u64);
 write_unsigned!(u128);
 write_unsigned!(usize);
+
+macro_rules! write_tuple {
+    ($t1:ident, $($t:ident),*) => {
+        impl<$t1, $($t,)*> Writable for ($t1, $($t,)*) where $t1:Writable, $($t: Writable,)* {
+            fn write(&self, writer: &mut Writer) {
+                #[allow(non_snake_case)]
+                let ($t1, $($t,)*) = self;
+                writer.write($t1);
+                $(
+                    writer.write_char(' ');
+                    writer.write($t);
+                )*
+            }
+        }
+    }
+}
+
+write_tuple!(A, B);
+write_tuple!(A, B, C);
+write_tuple!(A, B, C, D);
+write_tuple!(A, B, C, D, E);
+write_tuple!(A, B, C, D, E, F);
+write_tuple!(A, B, C, D, E, F, G);
+write_tuple!(A, B, C, D, E, F, G, H);
