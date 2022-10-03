@@ -1,21 +1,21 @@
-use std::io::{Stdout, StdoutLock, Write};
+use std::io::Write;
 
 use rlib_integer::Integer;
 
-pub struct Writer {
+pub struct Writer<'a> {
     buf: [u8; Writer::BUF_SIZE],
     end: usize,
-    stdout: StdoutLock<'static>,
+    stdout: Box<dyn Write + 'a>,
 }
 
-impl Writer {
+impl<'a> Writer<'a> {
     const BUF_SIZE: usize = 1 << 16;
 
-    pub fn new(stdout: &Stdout) -> Self {
+    pub fn new(stdout: Box<dyn Write + 'a>) -> Self {
         Self {
             buf: [0; Writer::BUF_SIZE],
             end: 0,
-            stdout: stdout.lock(),
+            stdout,
         }
     }
 
@@ -53,7 +53,7 @@ impl Writer {
     }
 }
 
-impl Drop for Writer {
+impl Drop for Writer<'_> {
     fn drop(&mut self) {
         self.flush();
     }

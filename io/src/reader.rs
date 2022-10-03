@@ -1,22 +1,22 @@
-use std::io::{Read, Stdin, StdinLock};
+use std::io::Read;
 
 pub struct Reader {
     buf: [u8; Reader::BUF_SIZE],
     begin: usize,
     end: usize,
-    stdin: StdinLock<'static>,
+    stdin: Box<dyn Read>,
     eof: bool,
 }
 
 impl Reader {
     const BUF_SIZE: usize = 1 << 16;
 
-    pub fn new(stdin: &Stdin) -> Self {
+    pub fn new(stdin: Box<dyn Read>) -> Self {
         Self {
             buf: [0; Reader::BUF_SIZE],
             begin: 0,
             end: 0,
-            stdin: stdin.lock(),
+            stdin,
             eof: false,
         }
     }
@@ -81,6 +81,7 @@ impl Readable for String {
     fn read(reader: &mut Reader) -> Self {
         reader.skip_whitespace();
         let mut result = String::new();
+        let mut read_something = false;
         while {
             if reader.begin == reader.end {
                 reader.refill();
@@ -89,7 +90,9 @@ impl Readable for String {
         } {
             result.push(reader.peek() as char);
             reader.begin += 1;
+            read_something = true;
         }
+        debug_assert!(read_something);
         result
     }
 }
@@ -100,6 +103,7 @@ macro_rules! read_signed {
             fn read(reader: &mut Reader) -> Self {
                 reader.skip_whitespace();
                 let mut result: $t = 0;
+                let mut read_something = false;
                 if reader.peek() == b'-' {
                     reader.begin += 1;
                     while {
@@ -108,8 +112,10 @@ macro_rules! read_signed {
                         }
                         !reader.eof && !reader.peek().is_ascii_whitespace()
                     } {
+                        debug_assert!(reader.buf[reader.begin].is_ascii_digit());
                         result = result * 10 - (reader.buf[reader.begin] - ('0' as u8)) as $t;
                         reader.begin += 1;
+                        read_something = true;
                     }
                 } else {
                     while {
@@ -118,10 +124,13 @@ macro_rules! read_signed {
                         }
                         !reader.eof && !reader.peek().is_ascii_whitespace()
                     } {
+                        debug_assert!(reader.buf[reader.begin].is_ascii_digit());
                         result = result * 10 + (reader.buf[reader.begin] - ('0' as u8)) as $t;
                         reader.begin += 1;
+                        read_something = true;
                     }
                 }
+                debug_assert!(read_something);
                 result
             }
         }
@@ -134,15 +143,19 @@ macro_rules! read_unsigned {
             fn read(reader: &mut Reader) -> Self {
                 reader.skip_whitespace();
                 let mut result: $t = 0;
+                let mut read_something = false;
                 while {
                     if reader.begin == reader.end {
                         reader.refill();
                     }
                     !reader.eof && !reader.peek().is_ascii_whitespace()
                 } {
+                    debug_assert!(reader.buf[reader.begin].is_ascii_digit());
                     result = result * 10 + (reader.buf[reader.begin] - ('0' as u8)) as $t;
                     reader.begin += 1;
+                    read_something = true;
                 }
+                debug_assert!(read_something);
                 result
             }
         }

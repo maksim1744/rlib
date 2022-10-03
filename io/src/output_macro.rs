@@ -19,11 +19,13 @@ macro_rules! make_output_macro_ {
     };
 
     ($writer:ident, $dol:tt) => {
+        #[allow(unused_macros)]
         macro_rules! out {
             ($dol($dol x:tt)*) => {
                 rlib_io::out_impl!($writer, $dol($dol x)*);
             };
         };
+        #[allow(unused_macros)]
         macro_rules! outln {
             ($dol($dol x:tt)*) => {
                 rlib_io::out_impl!($writer, $dol($dol x)*);
