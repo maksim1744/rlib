@@ -3,8 +3,8 @@ pub mod reader;
 pub mod writer;
 
 pub use output_macro::make_output_macro;
-pub use reader::Reader;
-pub use writer::Writer;
+pub use reader::{Readable, Reader};
+pub use writer::{Writable, Writer};
 
 #[macro_export]
 macro_rules! make_io {

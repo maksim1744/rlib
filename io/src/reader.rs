@@ -178,7 +178,7 @@ read_unsigned!(usize);
 
 macro_rules! read_tuple {
     ($($t:ident),*) => {
-        impl<$($t,)*> Readable for ($($t,)*) where $($t: Readable,)* {
+        impl<$($t: Readable,)*> Readable for ($($t,)*) {
             fn read(reader: &mut Reader) -> Self {
                 ($($t::read(reader)),*)
             }

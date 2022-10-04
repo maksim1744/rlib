@@ -79,10 +79,7 @@ impl Writable for String {
     }
 }
 
-impl<T> Writable for Vec<T>
-where
-    T: Writable,
-{
+impl<T: Writable> Writable for Vec<T> {
     fn write(&self, writer: &mut Writer) {
         for (i, value) in self.iter().enumerate() {
             if i != 0 {
@@ -145,7 +142,7 @@ write_unsigned!(usize);
 
 macro_rules! write_tuple {
     ($t1:ident, $($t:ident),*) => {
-        impl<$t1, $($t,)*> Writable for ($t1, $($t,)*) where $t1:Writable, $($t: Writable,)* {
+        impl<$t1: Writable, $($t: Writable,)*> Writable for ($t1, $($t,)*) {
             fn write(&self, writer: &mut Writer) {
                 #[allow(non_snake_case)]
                 let ($t1, $($t,)*) = self;
