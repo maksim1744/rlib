@@ -2,6 +2,10 @@ pub mod output_macro;
 pub mod reader;
 pub mod writer;
 
+pub use output_macro::make_output_macro;
+pub use reader::Reader;
+pub use writer::Writer;
+
 #[macro_export]
 macro_rules! make_io {
     ($reader:ident, $writer:ident) => {
