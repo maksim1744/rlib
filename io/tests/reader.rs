@@ -98,6 +98,15 @@ test_unsigned!(test_u32, u32, "4294967295");
 test_unsigned!(test_u64, u64, "18446744073709551615");
 test_unsigned!(test_u128, u128, "340282366920938463463374607431768211455");
 
+#[cfg(target_pointer_width = "32")]
+test_signed!(test_isize, isize, "-2147483648", "2147483647");
+#[cfg(target_pointer_width = "64")]
+test_signed!(test_isize, isize, "-9223372036854775808", "9223372036854775807");
+#[cfg(target_pointer_width = "32")]
+test_unsigned!(test_usize, usize, "4294967295");
+#[cfg(target_pointer_width = "64")]
+test_unsigned!(test_usize, usize, "18446744073709551615");
+
 #[test]
 fn vec() {
     assert_eq!(make_reader("1 20 -3 0 abc").read_vec::<i32>(4), vec![1, 20, -3, 0]);
@@ -110,6 +119,11 @@ fn vec() {
 #[test]
 fn tuple() {
     assert_eq!(read::<(i8, u8)>("-15 222"), (-15, 222));
+    // up to 8 items
+    assert_eq!(
+        read::<(i32, i32, i32, i32, i32, i32, i32, i32)>("1 2 3 4 5 6 7 8"),
+        (1, 2, 3, 4, 5, 6, 7, 8)
+    );
 }
 
 #[test]

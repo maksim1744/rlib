@@ -54,6 +54,15 @@ test_unsigned!(test_u32, u32, "4294967295");
 test_unsigned!(test_u64, u64, "18446744073709551615");
 test_unsigned!(test_u128, u128, "340282366920938463463374607431768211455");
 
+#[cfg(target_pointer_width = "32")]
+test_signed!(test_isize, isize, "-2147483648", "2147483647");
+#[cfg(target_pointer_width = "64")]
+test_signed!(test_isize, isize, "-9223372036854775808", "9223372036854775807");
+#[cfg(target_pointer_width = "32")]
+test_unsigned!(test_usize, usize, "4294967295");
+#[cfg(target_pointer_width = "64")]
+test_unsigned!(test_usize, usize, "18446744073709551615");
+
 #[test]
 fn vec() {
     assert_eq!(&write(vec![1, 2, -5, 20]), "1 2 -5 20");
@@ -62,6 +71,8 @@ fn vec() {
 #[test]
 fn tuple() {
     assert_eq!(&write((200 as u8, "hello", -111 as i8)), "200 hello -111");
+    // up to 8 items
+    assert_eq!(write((1, 2, 3, 4, 5, 6, 7, 8)), "1 2 3 4 5 6 7 8");
 }
 
 #[test]
