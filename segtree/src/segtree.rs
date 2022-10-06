@@ -1,5 +1,9 @@
-pub trait SegtreeItem {
+pub trait SegtreeItem: Sized {
     fn merge(left: &Self, right: &Self) -> Self;
+
+    fn update(&mut self, left: &Self, right: &Self) {
+        *self = Self::merge(left, right);
+    }
 }
 
 pub struct Segtree<T: SegtreeItem> {
@@ -42,7 +46,9 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
         let m = (l + r) / 2;
         self.rebuild(i * 2 + 1, l, m, data);
         self.rebuild(i * 2 + 2, m + 1, r, data);
-        self.data[i] = T::merge(&self.data[i * 2 + 1], &self.data[i * 2 + 2]);
+
+        let (left, right) = self.data.split_at_mut(i * 2 + 1);
+        left[i].update(&right[0], &right[1]);
     }
 
     pub fn set(&mut self, ind: usize, value: T) {
@@ -63,7 +69,8 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
             self.set_internal(ind, value, i * 2 + 2, m + 1, vr);
         }
 
-        self.data[i] = T::merge(&self.data[i * 2 + 1], &self.data[i * 2 + 2]);
+        let (left, right) = self.data.split_at_mut(i * 2 + 1);
+        left[i].update(&right[0], &right[1]);
     }
 
     pub fn ask(&self, l: usize, r: usize) -> T {
