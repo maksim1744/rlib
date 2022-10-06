@@ -1,4 +1,4 @@
-name: Rust
+name: CI
 
 on:
   push:
@@ -26,7 +26,11 @@ jobs:
           args: --all -- --check
 
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3

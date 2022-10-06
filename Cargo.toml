@@ -1,7 +1,8 @@
 [workspace]
 
 members = [
+    "f80",
     "integer",
     "io",
-    "tensor"
+    "tensor",
 ]
