@@ -26,6 +26,7 @@ make_randomable!(i8, u8);
 make_randomable!(i16, u16);
 make_randomable!(i32, u32);
 make_randomable!(i64, u64);
+make_randomable!(isize, usize);
 
 impl Randomable<f64> for std::ops::Range<f64> {
     fn gen_from_u64(self, rng: u64) -> f64 {

@@ -1,0 +1,9 @@
+[package]
+name = "rlib_segtree"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/maksim1744/rlib"
+license = "MIT"
+
+[dependencies]
+rlib_rand = { path = "../rand" }
