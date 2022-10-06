@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "dsu",
     "f80",
     "integer",
     "io",
