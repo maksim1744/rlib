@@ -5,5 +5,6 @@ members = [
     "f80",
     "integer",
     "io",
+    "rand",
     "tensor",
 ]
