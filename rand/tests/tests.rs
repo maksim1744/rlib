@@ -1,13 +1,5 @@
 use rlib_rand::*;
 
-#[test]
-fn from_time() {
-    // surely it takes at least one nanosecond
-    let mut r1 = Rng::from_time();
-    let mut r2 = Rng::from_time();
-    assert_ne!(r1.next_raw(), r2.next_raw());
-}
-
 macro_rules! test_minmax {
     ($t:ty, $r:expr) => {{
         const ITS: usize = 100000;
