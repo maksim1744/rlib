@@ -1,20 +1,19 @@
 use rlib_rand::*;
 
 macro_rules! test_minmax {
-    ($t:ty, $r:expr) => {{
-        const ITS: usize = 100000;
-        // probability of not getting a border is at most (1 - 1/256)^ITS = 0
-        let r: std::ops::Range<$t> = $r;
+    ($t:ty, $range:expr, $l:expr, $r:expr) => {{
+        const ITS: usize = 10000;
+        // probability of not getting a border is at most (1 - 1/256)^ITS = 1e-17
         let mut min = <$t>::MAX;
         let mut max = <$t>::MIN;
         let mut rng = Rng::from_seed(42);
         for _ in 0..ITS {
-            let val = rng.next(r.clone());
+            let val = rng.next::<$t, _>($range);
             min = min.min(val);
             max = max.max(val);
         }
-        assert_eq!(min, r.start);
-        assert_eq!(max, r.end - 1);
+        assert_eq!(min, $l);
+        assert_eq!(max, $r);
     }};
 }
 
@@ -50,22 +49,51 @@ macro_rules! test_boundaries {
 }
 
 #[test]
-fn small_overflows() {
-    test_minmax!(i8, 0..1);
-    test_minmax!(i8, 10..11);
-    test_minmax!(i8, 120..127);
-    test_minmax!(i8, 126..127);
-    test_minmax!(i8, -10..-9);
-    test_minmax!(i8, -128..-127);
-    test_minmax!(i8, -128..127);
-    test_minmax!(i8, -80..80);
+fn range() {
+    for l in i8::MIN..i8::MAX {
+        for r in l + 1..=i8::MAX {
+            test_minmax!(i8, l..r, l, r - 1);
+        }
+    }
+    for l in u8::MIN..u8::MAX {
+        for r in l + 1..=u8::MAX {
+            test_minmax!(u8, l..r, l, r - 1);
+        }
+    }
+}
 
-    test_minmax!(u8, 0..1);
-    test_minmax!(u8, 254..255);
-    test_minmax!(u8, 0..255);
-    test_minmax!(u8, 10..20);
-    test_minmax!(u8, 150..154);
-    test_minmax!(u8, 42..250);
+#[test]
+fn range_inclusive() {
+    for l in i8::MIN..=i8::MAX {
+        for r in l..=i8::MAX {
+            test_minmax!(i8, l..=r, l, r);
+        }
+    }
+    for l in u8::MIN..=u8::MAX {
+        for r in l..=u8::MAX {
+            test_minmax!(u8, l..=r, l, r);
+        }
+    }
+}
+
+#[test]
+fn range_inclusive_to() {
+    for r in 0..=i8::MAX {
+        test_minmax!(i8, ..=r, 0, r);
+    }
+    for r in 0..=u8::MAX {
+        test_minmax!(u8, ..=r, 0, r);
+    }
+}
+
+#[test]
+fn range_to() {
+    for r in 1..=i8::MAX {
+        test_minmax!(i8, ..r, 0, r - 1);
+    }
+    for r in 1..=u8::MAX {
+        test_minmax!(u8, ..r, 0, r - 1);
+    }
 }
 
 #[test]

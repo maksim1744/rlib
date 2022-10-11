@@ -2,12 +2,13 @@ use std::time::SystemTime;
 
 use crate::randomable::*;
 
+#[derive(Copy, Clone)]
 pub struct LinearCongruentialGenerator64<const A: u64, const C: u64> {
     state: u64,
 }
 
 impl<const A: u64, const C: u64> LinearCongruentialGenerator64<A, C> {
-    pub fn from_seed(seed: u64) -> Self {
+    pub const fn from_seed(seed: u64) -> Self {
         Self { state: seed }
     }
 
