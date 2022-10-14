@@ -5,6 +5,7 @@ members = [
     "f80",
     "integer",
     "io",
+    "mint",
     "rand",
     "segtree",
     "sieve",
