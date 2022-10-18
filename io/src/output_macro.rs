@@ -27,6 +27,9 @@ macro_rules! make_output_macro_ {
         }
         #[allow(unused_macros)]
         macro_rules! outln {
+            () => {
+                $writer.write_char('\n');
+            };
             ($dol($dol x:tt)*) => {
                 rlib_io::out_impl!($writer, $dol($dol x)*);
                 $writer.write_char('\n');
