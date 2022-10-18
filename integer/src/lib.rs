@@ -1,6 +1,24 @@
-pub trait Integer {
-    type Unsigned;
-    type Signed;
+use std::cmp::*;
+use std::ops::*;
+
+pub trait Integer:
+    Add<Output = Self>
+    + AddAssign
+    + Sub<Output = Self>
+    + SubAssign
+    + Div<Output = Self>
+    + DivAssign
+    + Rem<Output = Self>
+    + RemAssign
+    + Mul<Output = Self>
+    + MulAssign
+    + PartialEq
+    + Copy
+    + Clone
+    + Sized
+{
+    type Unsigned: Integer;
+    type Signed: Integer;
 
     const BASE_10_LEN: usize;
 
@@ -9,6 +27,7 @@ pub trait Integer {
     const TWO: Self;
 
     fn unsigned_abs(self) -> Self::Unsigned;
+    fn abs(self) -> Self;
 }
 
 macro_rules! integer_common {
@@ -44,12 +63,18 @@ macro_rules! integer {
             fn unsigned_abs(self) -> Self::Unsigned {
                 Self::unsigned_abs(self)
             }
+            fn abs(self) -> Self {
+                self.abs()
+            }
         }
 
         impl Integer for $ut {
             integer_common!($it, $ut, $len);
 
             fn unsigned_abs(self) -> Self::Unsigned {
+                self
+            }
+            fn abs(self) -> Self {
                 self
             }
         }

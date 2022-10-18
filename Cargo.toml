@@ -3,6 +3,7 @@
 members = [
     "dsu",
     "f80",
+    "gcd",
     "integer",
     "io",
     "mint",
