@@ -44,6 +44,10 @@ impl DSU {
         true
     }
 
+    pub fn check(&mut self, u: usize, v: usize) -> bool {
+        self.par(u) == self.par(v)
+    }
+
     pub fn size(&mut self, v: usize) -> usize {
         let v = self.par(v);
         self.sz[v]

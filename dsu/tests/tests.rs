@@ -15,6 +15,11 @@ fn simple() {
     assert_eq!(dsu.size(0), 3);
     assert_eq!(dsu.size(1), 3);
     assert_eq!(dsu.size(2), 3);
+    assert!(dsu.check(0, 1));
+    assert!(dsu.check(0, 2));
+    assert!(dsu.check(2, 1));
+    assert!(!dsu.check(3, 0));
+    assert!(!dsu.check(1, 3));
 
     assert!(dsu.un(3, 0));
     assert_eq!(dsu.par(0), root);
