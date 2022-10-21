@@ -1,17 +1,17 @@
 use std::io::Read;
 
-pub struct Reader {
+pub struct Reader<'a> {
     buf: [u8; Reader::BUF_SIZE],
     begin: usize,
     end: usize,
-    stdin: Box<dyn Read>,
+    stdin: Box<dyn Read + 'a>,
     eof: bool,
 }
 
-impl Reader {
+impl<'a> Reader<'a> {
     const BUF_SIZE: usize = 1 << 16;
 
-    pub fn new(stdin: Box<dyn Read>) -> Self {
+    pub fn new(stdin: Box<dyn Read + 'a>) -> Self {
         Self {
             buf: [0; Reader::BUF_SIZE],
             begin: 0,
