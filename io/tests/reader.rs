@@ -36,6 +36,7 @@ fn debug_assertions_in_debug() {
     assert_eq!(try_read::<i32>("2147483648"), None);
     assert_eq!(try_read::<i32>("-2147483649"), None);
     assert_eq!(try_read::<u32>("-1"), None);
+    assert_eq!(try_read::<char>(""), None);
 }
 
 #[test]
@@ -124,6 +125,11 @@ fn tuple() {
         read::<(i32, i32, i32, i32, i32, i32, i32, i32)>("1 2 3 4 5 6 7 8"),
         (1, 2, 3, 4, 5, 6, 7, 8)
     );
+}
+
+#[test]
+fn char() {
+    assert_eq!(read::<char>("  x  "), 'x');
 }
 
 #[test]

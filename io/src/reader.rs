@@ -97,6 +97,16 @@ impl Readable for String {
     }
 }
 
+impl Readable for char {
+    fn read(reader: &mut Reader) -> Self {
+        reader.skip_whitespace();
+        debug_assert!(!reader.eof);
+        let result = reader.peek() as char;
+        reader.begin += 1;
+        result
+    }
+}
+
 macro_rules! read_signed {
     ($t:ty) => {
         impl Readable for $t {
