@@ -37,6 +37,19 @@ impl<const M: i32> Modular<M> {
     pub fn md() -> i32 {
         M
     }
+
+    pub fn pow(&self, mut d: u64) -> Self {
+        let mut res = Self::ONE;
+        let mut a = *self;
+        while d != 0 {
+            if d % 2 == 1 {
+                res *= a;
+            }
+            a *= a;
+            d /= 2;
+        }
+        res
+    }
 }
 
 impl<const M: i32> Add for Modular<M> {
