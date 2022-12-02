@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "bitset",
     "dsu",
     "f80",
     "gcd",
