@@ -1,16 +1,3 @@
 [workspace]
 
-members = [
-    "bitset",
-    "dsu",
-    "f80",
-    "gcd",
-    "integer",
-    "io",
-    "mint",
-    "rand",
-    "segtree",
-    "sieve",
-    "tensor",
-    "treap",
-]
+members = ["rlib/*"]
