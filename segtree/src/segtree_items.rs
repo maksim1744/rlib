@@ -1,4 +1,5 @@
 use crate::segtree::SegtreeItem;
+use rlib_integer::Integer;
 
 #[derive(Clone, Debug)]
 pub struct Min<T: std::cmp::PartialOrd + Clone> {
@@ -7,6 +8,11 @@ pub struct Min<T: std::cmp::PartialOrd + Clone> {
 impl<T: std::cmp::PartialOrd + Clone> Min<T> {
     pub fn new(v: T) -> Self {
         Self { v }
+    }
+}
+impl<T: std::cmp::PartialOrd + Clone + Integer> Default for Min<T> {
+    fn default() -> Self {
+        Self { v: T::MAX }
     }
 }
 
@@ -29,6 +35,11 @@ impl<T: std::cmp::PartialOrd + Clone> Max<T> {
         Self { v }
     }
 }
+impl<T: std::cmp::PartialOrd + Clone + Integer> Default for Max<T> {
+    fn default() -> Self {
+        Self { v: T::MIN }
+    }
+}
 
 impl<T: std::cmp::PartialOrd + Clone> SegtreeItem for Max<T> {
     fn merge(left: &Self, right: &Self) -> Self {
@@ -47,6 +58,11 @@ pub struct Sum<T: Clone> {
 impl<T: std::cmp::PartialOrd + Clone> Sum<T> {
     pub fn new(v: T) -> Self {
         Self { v }
+    }
+}
+impl<T: std::cmp::PartialOrd + Clone + Integer> Default for Sum<T> {
+    fn default() -> Self {
+        Self { v: T::ZERO }
     }
 }
 

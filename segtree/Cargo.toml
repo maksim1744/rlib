@@ -7,3 +7,4 @@ license = "MIT"
 
 [dependencies]
 rlib_rand = { path = "../rand" }
+rlib_integer = { path = "../integer" }

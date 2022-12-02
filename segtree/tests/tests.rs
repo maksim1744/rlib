@@ -26,7 +26,7 @@ fn min() {
         let mut ar: Vec<i32> = vec![0; n];
 
         for _ in 0..its {
-            let tp = rng.next(0..3);
+            let tp = rng.next(0..4);
             if tp == 0 {
                 let ind = rng.next(0..n);
                 let val = rng.next(i32::MIN..i32::MAX);
@@ -39,6 +39,8 @@ fn min() {
                 assert_eq!(correct, result);
             } else if tp == 2 {
                 tree = Segtree::from_slice(&ar.iter().map(|&x| Min::new(x)).collect::<Vec<_>>());
+            } else if tp == 3 {
+                tree = Segtree::from_iter(ar.iter().map(|&x| Min::new(x)));
             } else {
                 assert!(false);
             }
@@ -58,7 +60,7 @@ fn max() {
         let mut ar: Vec<i32> = vec![0; n];
 
         for _ in 0..its {
-            let tp = rng.next(0..3);
+            let tp = rng.next(0..4);
             if tp == 0 {
                 let ind = rng.next(0..n);
                 let val = rng.next(i32::MIN..i32::MAX);
@@ -71,6 +73,8 @@ fn max() {
                 assert_eq!(correct, result);
             } else if tp == 2 {
                 tree = Segtree::from_slice(&ar.iter().map(|&x| Max::new(x)).collect::<Vec<_>>());
+            } else if tp == 3 {
+                tree = Segtree::from_iter(ar.iter().map(|&x| Max::new(x)));
             } else {
                 assert!(false);
             }
@@ -90,7 +94,7 @@ fn sum() {
         let mut ar: Vec<i32> = vec![0; n];
 
         for _ in 0..its {
-            let tp = rng.next(0..3);
+            let tp = rng.next(0..4);
             if tp == 0 {
                 let ind = rng.next(0..n);
                 let val = rng.next(i32::MIN / n as i32..i32::MAX / n as i32);
@@ -103,6 +107,8 @@ fn sum() {
                 assert_eq!(correct, result);
             } else if tp == 2 {
                 tree = Segtree::from_slice(&ar.iter().map(|&x| Sum::new(x)).collect::<Vec<_>>());
+            } else if tp == 3 {
+                tree = Segtree::from_iter(ar.iter().map(|&x| Sum::new(x)));
             } else {
                 assert!(false);
             }

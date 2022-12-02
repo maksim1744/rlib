@@ -26,6 +26,9 @@ pub trait Integer:
     const ONE: Self;
     const TWO: Self;
 
+    const MIN: Self;
+    const MAX: Self;
+
     fn unsigned_abs(self) -> Self::Unsigned;
     fn abs(self) -> Self;
 }
@@ -40,6 +43,9 @@ macro_rules! integer_common {
         const ZERO: Self = 0;
         const ONE: Self = 1;
         const TWO: Self = 2;
+
+        const MIN: Self = Self::MIN;
+        const MAX: Self = Self::MAX;
     };
 }
 

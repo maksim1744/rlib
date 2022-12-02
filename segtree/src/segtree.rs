@@ -26,26 +26,46 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
 
     pub fn new(n: usize, value: T) -> Self {
         let mut res = Self::new_raw(n, value);
-        res.rebuild(0, 0, res.n - 1, None);
+        res.rebuild_empty(0, 0, res.n - 1);
         res
     }
 
     pub fn from_slice(data: &[T]) -> Self {
         let mut res = Self::new_raw(data.len(), data[0].clone());
-        res.rebuild(0, 0, res.n - 1, Some(data));
+        res.rebuild(0, 0, res.n - 1, &mut data.iter().cloned());
         res
     }
 
-    fn rebuild(&mut self, i: usize, l: usize, r: usize, data: Option<&[T]>) {
+    pub fn from_iter<I>(mut iter: I) -> Self
+    where
+        I: std::iter::Iterator<Item = T> + std::iter::ExactSizeIterator,
+        T: Default,
+    {
+        let mut res = Self::new_raw(iter.len(), T::default());
+        res.rebuild(0, 0, res.n - 1, &mut iter);
+        res
+    }
+
+    fn rebuild(&mut self, i: usize, l: usize, r: usize, data: &mut impl std::iter::Iterator<Item = T>) {
         if l == r {
-            if let Some(data) = data {
-                self.data[i] = data[l].clone();
-            }
+            self.data[i] = data.next().unwrap();
             return;
         }
         let m = (l + r) / 2;
         self.rebuild(i * 2 + 1, l, m, data);
         self.rebuild(i * 2 + 2, m + 1, r, data);
+
+        let (left, right) = self.data.split_at_mut(i * 2 + 1);
+        left[i].update(&right[0], &right[1]);
+    }
+
+    fn rebuild_empty(&mut self, i: usize, l: usize, r: usize) {
+        if l == r {
+            return;
+        }
+        let m = (l + r) / 2;
+        self.rebuild_empty(i * 2 + 1, l, m);
+        self.rebuild_empty(i * 2 + 2, m + 1, r);
 
         let (left, right) = self.data.split_at_mut(i * 2 + 1);
         left[i].update(&right[0], &right[1]);
