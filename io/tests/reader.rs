@@ -152,3 +152,11 @@ fn string() {
     let s2 = ["123\t", &s, "\n456"].concat();
     assert!(read::<(i32, String, i32)>(&s2) == (123, s, 456));
 }
+
+#[test]
+fn read_line() {
+    let mut reader = make_reader(" 123 \n 456 \n789\n\n0");
+    assert_eq!(reader.read_lines(), vec![" 123 ", " 456 ", "789", "", "0"]);
+    let mut reader = make_reader("\n\n 123 \n 456 \n789\n\n0\n\n");
+    assert_eq!(reader.read_lines(), vec!["", "", " 123 ", " 456 ", "789", "", "0", ""]);
+}

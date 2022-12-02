@@ -25,6 +25,35 @@ impl<'a> Reader<'a> {
         T::read(self)
     }
 
+    pub fn read_line(&mut self) -> Option<String> {
+        let mut result = String::new();
+        let mut read_something = false;
+        while {
+            if self.begin == self.end {
+                self.refill();
+            }
+            !self.eof
+        } {
+            let c = self.peek() as char;
+            result.push(c);
+            self.begin += 1;
+            read_something = true;
+            if c == '\n' {
+                result.pop().unwrap();
+                break;
+            }
+        }
+        if read_something {
+            Some(result)
+        } else {
+            None
+        }
+    }
+
+    pub fn read_lines(&mut self) -> Vec<String> {
+        (0..).map_while(|_| self.read_line()).collect()
+    }
+
     pub fn read_vec<T: Readable>(&mut self, n: usize) -> Vec<T> {
         let mut result = Vec::<T>::with_capacity(n);
         for _ in 0..n {
