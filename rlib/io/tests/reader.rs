@@ -159,4 +159,9 @@ fn read_line() {
     assert_eq!(reader.read_lines(), vec![" 123 ", " 456 ", "789", "", "0"]);
     let mut reader = make_reader("\n\n 123 \n 456 \n789\n\n0\n\n");
     assert_eq!(reader.read_lines(), vec!["", "", " 123 ", " 456 ", "789", "", "0", ""]);
+
+    let mut reader = make_reader(" 123 \r\n 456 \r\n789\r\n\r\n0");
+    assert_eq!(reader.read_lines(), vec![" 123 ", " 456 ", "789", "", "0"]);
+    let mut reader = make_reader("\r\n\r\n 123 \r\n 456 \r\n789\r\n\r\n0\r\n\r\n");
+    assert_eq!(reader.read_lines(), vec!["", "", " 123 ", " 456 ", "789", "", "0", ""]);
 }

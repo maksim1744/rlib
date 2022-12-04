@@ -38,7 +38,11 @@ impl<'a> Reader<'a> {
             result.push(c);
             self.begin += 1;
             read_something = true;
-            if c == '\n' {
+            if c == '\r' && self.peek() == b'\n' {
+                result.pop().unwrap();
+                self.begin += 1;
+                break;
+            } else if c == '\n' {
                 result.pop().unwrap();
                 break;
             }
