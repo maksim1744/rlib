@@ -27,6 +27,11 @@ macro_rules! implement_ranges {
                 (0..=self.end).gen_from_u64(rng)
             }
         }
+        impl Randomable<$t> for RangeFull {
+            fn gen_from_u64(self, rng: u64) -> $t {
+                rng as $t
+            }
+        }
     };
 }
 

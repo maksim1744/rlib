@@ -97,6 +97,12 @@ fn range_to() {
 }
 
 #[test]
+fn range_full() {
+    test_minmax!(i8, .., i8::MIN, i8::MAX);
+    test_minmax!(u8, .., u8::MIN, u8::MAX);
+}
+
+#[test]
 fn f64() {
     test_boundaries!(f64, 10.0..15.0);
     test_boundaries!(f64, -10.0..15.0);
