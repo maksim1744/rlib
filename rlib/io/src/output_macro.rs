@@ -14,11 +14,15 @@ macro_rules! out_impl {
 
 #[macro_export]
 macro_rules! make_output_macro_ {
-    ($writer:ident) => {
-        make_output_macro_!($writer, $);
+    ($reader:ident, $writer:ident) => {
+        #[allow(unused_variables)]
+        let mut $reader = $reader;
+        #[allow(unused_variables)]
+        let mut $writer = $writer;
+        make_output_macro_!($reader, $writer, $);
     };
 
-    ($writer:ident, $dol:tt) => {
+    ($reader:ident, $writer:ident, $dol:tt) => {
         #[allow(unused_macros)]
         macro_rules! out {
             ($dol($dol x:tt)*) => {

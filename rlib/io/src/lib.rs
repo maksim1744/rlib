@@ -16,6 +16,6 @@ macro_rules! make_io {
         #[allow(unused_variables)]
         let mut $writer = rlib_io::writer::Writer::new(Box::new(_stdout_.lock()));
 
-        rlib_io::output_macro::make_output_macro!($writer);
+        rlib_io::output_macro::make_output_macro!($reader, $writer);
     };
 }
