@@ -50,6 +50,10 @@ impl<const M: i32> Modular<M> {
         }
         res
     }
+
+    pub fn inner(&self) -> i32 {
+        self.v
+    }
 }
 
 impl<const M: i32> Add for Modular<M> {
