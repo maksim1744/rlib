@@ -61,3 +61,21 @@ fn supermasks() {
 
     assert_eq!(iter_supermasks(0u128).take(5).collect::<Vec<_>>(), vec![0, 1, 2, 3, 4]);
 }
+
+#[test]
+fn neighbours() {
+    assert_eq!(
+        iter_neighbours(10, 10, 5, 5).collect::<Vec<_>>(),
+        vec![(5, 6), (4, 5), (5, 4), (6, 5)]
+    );
+
+    assert_eq!(iter_neighbours(10, 10, 0, 0).collect::<Vec<_>>(), vec![(0, 1), (1, 0)]);
+
+    assert_eq!(iter_neighbours(10, 10, 9, 9).collect::<Vec<_>>(), vec![(8, 9), (9, 8)]);
+
+    assert_eq!(iter_neighbours(1, 10, 0, 5).collect::<Vec<_>>(), vec![(0, 6), (0, 4)]);
+
+    assert_eq!(iter_neighbours(10, 1, 0, 0).collect::<Vec<_>>(), vec![(1, 0)]);
+
+    assert_eq!(iter_neighbours(1, 1, 0, 0).collect::<Vec<_>>(), Vec::new());
+}
