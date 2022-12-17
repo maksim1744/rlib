@@ -160,3 +160,77 @@ fn substring() {
         }
     }
 }
+
+#[derive(Clone)]
+struct SumAdd {
+    len: i64,
+    sum: i64,
+    md: i64,
+}
+
+impl SumAdd {
+    fn new(x: i64) -> Self {
+        Self { len: 1, sum: x, md: 0 }
+    }
+}
+
+impl SegtreeItem for SumAdd {
+    fn merge(left: &Self, right: &Self) -> Self {
+        Self {
+            len: left.len + right.len,
+            sum: left.sum + right.sum,
+            md: 0,
+        }
+    }
+}
+
+impl SegtreeItemLazy<i64> for SumAdd {
+    fn modify(&mut self, md: &i64) {
+        self.sum += md * self.len;
+        self.md += md;
+    }
+
+    fn push(&mut self, left: &mut Self, right: &mut Self) {
+        left.modify(&self.md);
+        right.modify(&self.md);
+        self.md = 0;
+    }
+}
+
+#[test]
+fn lazy_sum() {
+    let mut rng = Rng::from_seed(42);
+
+    for &n in SIZES.iter() {
+        let its = TOTAL_ITS / n; // each iteration will take O(n) in bruteforce
+
+        let mut tree = Segtree::new(n, SumAdd::new(0));
+        let mut ar: Vec<i64> = vec![0; n];
+
+        for _ in 0..its {
+            let tp = rng.next(0..4);
+            if tp == 0 {
+                let ind = rng.next(0..n);
+                let val = rng.next(i32::MIN / n as i32..i32::MAX / n as i32) as i64;
+                ar[ind] = val;
+                tree.set(ind, SumAdd::new(val));
+            } else if tp == 1 {
+                let (l, r) = gen_lr(&mut rng, n);
+                let correct = ar[l..r + 1].iter().sum::<i64>();
+                let result = tree.ask(l, r).sum;
+                assert_eq!(correct, result);
+            } else if tp == 2 {
+                tree = Segtree::from_slice(&ar.iter().map(|&x| SumAdd::new(x)).collect::<Vec<_>>());
+            } else if tp == 3 {
+                let (l, r) = gen_lr(&mut rng, n);
+                let val = rng.next(i32::MIN / n as i32..i32::MAX / n as i32) as i64;
+                for i in l..=r {
+                    ar[i] += val;
+                }
+                tree.modify(l, r, &val);
+            } else {
+                assert!(false);
+            }
+        }
+    }
+}

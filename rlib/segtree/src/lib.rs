@@ -1,3 +1,3 @@
 pub mod segtree;
 pub mod segtree_items;
-pub use segtree::{Segtree, SegtreeItem};
+pub use segtree::{Segtree, SegtreeItem, SegtreeItemLazy};

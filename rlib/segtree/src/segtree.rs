@@ -6,12 +6,24 @@ pub trait SegtreeItem: Sized {
     }
 }
 
-pub struct Segtree<T: SegtreeItem> {
-    n: usize,
-    data: Vec<T>,
+pub trait SegtreeItemLazy<T>: SegtreeItem {
+    fn modify(&mut self, modifier: &T);
+
+    fn push(&mut self, left: &mut Self, right: &mut Self);
 }
 
-impl<T: Clone + SegtreeItem> Segtree<T> {
+impl<T: SegtreeItem> SegtreeItemLazy<()> for T {
+    fn modify(&mut self, _modifier: &()) {}
+    fn push(&mut self, _left: &mut Self, _right: &mut Self) {}
+}
+
+pub struct Segtree<T, M> {
+    n: usize,
+    data: Vec<T>,
+    phantom: std::marker::PhantomData<M>,
+}
+
+impl<M, T: Clone + SegtreeItemLazy<M>> Segtree<T, M> {
     pub fn new_raw(n: usize, value: T) -> Self {
         assert!(n != 0);
         let mut p2: usize = 1;
@@ -21,6 +33,7 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
         Self {
             n,
             data: vec![value; p2 * 2],
+            phantom: std::marker::PhantomData,
         }
     }
 
@@ -81,6 +94,11 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
             self.data[i] = value;
             return;
         }
+        {
+            let (left, right) = self.data.split_at_mut(i * 2 + 1);
+            let (r1, r2) = right.split_at_mut(1);
+            left[i].push(&mut r1[0], &mut r2[0]);
+        }
 
         let m = (vl + vr) / 2;
         if ind <= m {
@@ -93,15 +111,20 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
         left[i].update(&right[0], &right[1]);
     }
 
-    pub fn ask(&self, l: usize, r: usize) -> T {
+    pub fn ask(&mut self, l: usize, r: usize) -> T {
         assert!(l <= r);
         assert!(r < self.n);
         self.ask_internal(l, r, 0, 0, self.n - 1)
     }
 
-    fn ask_internal(&self, l: usize, r: usize, i: usize, vl: usize, vr: usize) -> T {
+    fn ask_internal(&mut self, l: usize, r: usize, i: usize, vl: usize, vr: usize) -> T {
         if l == vl && r == vr {
             return self.data[i].clone();
+        }
+        {
+            let (left, right) = self.data.split_at_mut(i * 2 + 1);
+            let (r1, r2) = right.split_at_mut(1);
+            left[i].push(&mut r1[0], &mut r2[0]);
         }
 
         let m = (vl + vr) / 2;
@@ -115,5 +138,36 @@ impl<T: Clone + SegtreeItem> Segtree<T> {
                 &self.ask_internal(m + 1, r, i * 2 + 2, m + 1, vr),
             )
         }
+    }
+
+    pub fn modify(&mut self, l: usize, r: usize, md: &M) {
+        assert!(l <= r);
+        assert!(r < self.n);
+        self.modify_internal(l, r, md, 0, 0, self.n - 1)
+    }
+
+    fn modify_internal(&mut self, l: usize, r: usize, md: &M, i: usize, vl: usize, vr: usize) {
+        if l == vl && r == vr {
+            self.data[i].modify(md);
+            return;
+        }
+        {
+            let (left, right) = self.data.split_at_mut(i * 2 + 1);
+            let (r1, r2) = right.split_at_mut(1);
+            left[i].push(&mut r1[0], &mut r2[0]);
+        }
+
+        let m = (vl + vr) / 2;
+        if r <= m {
+            self.modify_internal(l, r, md, i * 2 + 1, vl, m);
+        } else if l > m {
+            self.modify_internal(l, r, md, i * 2 + 2, m + 1, vr);
+        } else {
+            self.modify_internal(l, m, md, i * 2 + 1, vl, m);
+            self.modify_internal(m + 1, r, md, i * 2 + 2, m + 1, vr);
+        }
+
+        let (left, right) = self.data.split_at_mut(i * 2 + 1);
+        left[i].update(&right[0], &right[1]);
     }
 }
