@@ -66,6 +66,11 @@ impl<'a> Reader<'a> {
         result
     }
 
+    pub fn is_eof(&mut self) -> bool {
+        self.skip_whitespace();
+        self.eof
+    }
+
     fn refill(&mut self) {
         if self.eof {
             return;
