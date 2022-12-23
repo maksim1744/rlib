@@ -22,3 +22,12 @@ pub fn egcd<T: Integer>(a: T, b: T, c: T) -> (T, T) {
     let (y0, x0) = egcd(b % a, a, c);
     (x0 - (b / a) * y0, y0)
 }
+
+pub fn crt<T: Integer + std::ops::Neg<Output = T>>(a1: T, m1: T, a2: T, m2: T) -> T {
+    let g = gcd(m1, m2);
+    assert!(a1 % g == a2 % g);
+    let (x, _) = egcd(m1, -m2, a2 - a1);
+    let m2 = m2 / g;
+    let x = (x % m2 + m2) % m2;
+    m1 * x + a1
+}

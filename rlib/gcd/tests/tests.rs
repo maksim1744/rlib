@@ -21,7 +21,7 @@ fn simple() {
 }
 
 #[test]
-fn egcd() {
+fn test_egcd() {
     for a in -10..10 {
         for b in -10..10 {
             if a == 0 || b == 0 {
@@ -29,7 +29,7 @@ fn egcd() {
             }
             for k in -10..10 {
                 let c = k * gcd(a, b);
-                let (x, y) = rlib_gcd::egcd(a, b, c);
+                let (x, y) = egcd(a, b, c);
                 assert_eq!(a * x + b * y, c);
             }
         }
@@ -39,5 +39,25 @@ fn egcd() {
 #[test]
 #[should_panic]
 fn egcd_panic() {
-    rlib_gcd::egcd(10, 15, 7);
+    egcd(10, 15, 7);
+}
+
+#[test]
+fn test_crt() {
+    for m1 in 1..=50i32 {
+        for a1 in 0..m1 {
+            for m2 in 1..=50 {
+                for a2 in 0..m2 {
+                    if (a1 - a2).abs() % gcd(m1, m2) != 0 {
+                        continue;
+                    }
+                    let mut k = 0;
+                    while k % m1 != a1 || k % m2 != a2 {
+                        k += 1;
+                    }
+                    assert_eq!(k, crt(a1, m1, a2, m2));
+                }
+            }
+        }
+    }
 }
