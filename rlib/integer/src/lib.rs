@@ -13,6 +13,9 @@ pub trait Integer:
     + Mul<Output = Self>
     + MulAssign
     + PartialEq
+    + Eq
+    + PartialOrd
+    + Ord
     + Copy
     + Clone
     + Sized

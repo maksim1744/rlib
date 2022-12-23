@@ -1,0 +1,10 @@
+[package]
+name = "rlib_rational"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/maksim1744/rlib"
+license = "MIT"
+
+[dependencies]
+rlib_gcd = { path = "../gcd" }
+rlib_integer = { path = "../integer" }
