@@ -100,6 +100,7 @@ impl<const M: i32> MulAssign for Modular<M> {
     }
 }
 
+#[allow(clippy::suspicious_arithmetic_impl)]
 impl<const M: i32> Div for Modular<M> {
     type Output = Self;
     fn div(self, rhs: Self) -> Self {

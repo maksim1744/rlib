@@ -1,5 +1,6 @@
 use crate::treap_node::{TreapItem, TreapItemSized, TreapNode};
 
+#[derive(Default)]
 pub struct Treap<T> {
     pub root: Option<Box<TreapNode<T>>>,
 }
@@ -37,10 +38,7 @@ where
     }
 
     pub fn first(&mut self) -> Option<&T> {
-        if self.root.is_none() {
-            return None;
-        }
-        let mut node = self.root.as_mut().unwrap();
+        let mut node = self.root.as_mut()?;
         while node.left.is_some() {
             node.push();
             node = node.left.as_mut().unwrap();
@@ -49,10 +47,7 @@ where
     }
 
     pub fn last(&mut self) -> Option<&T> {
-        if self.root.is_none() {
-            return None;
-        }
-        let mut node = self.root.as_mut().unwrap();
+        let mut node = self.root.as_mut()?;
         while node.right.is_some() {
             node.push();
             node = node.right.as_mut().unwrap();

@@ -38,12 +38,17 @@ impl<T, const D: usize> Tensor<T, D> {
         self.data.iter()
     }
 
-    pub fn into_iter(self) -> std::vec::IntoIter<T> {
-        self.data.into_iter()
-    }
-
     pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, T> {
         self.data.iter_mut()
+    }
+}
+
+impl<T, const D: usize> IntoIterator for Tensor<T, D> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
     }
 }
 
@@ -61,7 +66,7 @@ impl<T: Clone, const D: usize> Tensor<T, D> {
         assert_eq!(dims.iter().product::<usize>(), data.len());
         Self {
             dims,
-            data: data.iter().cloned().collect(),
+            data: data.to_vec(),
         }
     }
 }
@@ -111,9 +116,7 @@ impl<T: Writable, const D: usize> Writable for Tensor<T, D> {
                     }
                 }
                 idx[pos] += 1;
-                for i in pos + 1..D {
-                    idx[i] = 0;
-                }
+                idx[pos + 1..].fill(0);
             } else {
                 break;
             }
@@ -140,9 +143,7 @@ impl<T: std::fmt::Debug, const D: usize> std::fmt::Debug for Tensor<T, D> {
                     }
                 }
                 idx[pos] += 1;
-                for i in pos + 1..D {
-                    idx[i] = 0;
-                }
+                idx[pos + 1..].fill(0);
             } else {
                 break;
             }

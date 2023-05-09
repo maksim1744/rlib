@@ -49,6 +49,8 @@ impl<M, T: Clone + SegtreeItemLazy<M>> Segtree<T, M> {
         res
     }
 
+    // this requires ExactSizeIterator unlike std::iter::FromIterator
+    #[allow(clippy::should_implement_trait)]
     pub fn from_iter<I>(mut iter: I) -> Self
     where
         I: std::iter::Iterator<Item = T> + std::iter::ExactSizeIterator,

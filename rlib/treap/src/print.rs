@@ -59,11 +59,11 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.node {
-            None => writeln!(f, "{: >indent$}{}", "", "- [None]", indent = self.indent)?,
+            None => writeln!(f, "{: >indent$}- [None]", "", indent = self.indent)?,
             Some(node) => {
-                write!(f, "{: >indent$}{}", "", "- ", indent = self.indent)?;
+                write!(f, "{: >indent$}- ", "", indent = self.indent)?;
                 node.item.fmt(f)?;
-                writeln!(f, "")?;
+                writeln!(f)?;
                 TreePrinter::from_node(&node.left, self.indent + 3).fmt(f)?;
                 TreePrinter::from_node(&node.right, self.indent + 3).fmt(f)?;
             }

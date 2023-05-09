@@ -51,20 +51,18 @@ where
             right
         } else if right.is_none() {
             left
+        } else if left.as_ref().unwrap().priority < right.as_ref().unwrap().priority {
+            left.as_mut().unwrap().push();
+            let m = left.as_mut().unwrap().right.take();
+            left.as_mut().unwrap().right = Self::merge(m, right);
+            left.as_mut().unwrap().update();
+            left
         } else {
-            if left.as_ref().unwrap().priority < right.as_ref().unwrap().priority {
-                left.as_mut().unwrap().push();
-                let m = left.as_mut().unwrap().right.take();
-                left.as_mut().unwrap().right = Self::merge(m, right);
-                left.as_mut().unwrap().update();
-                left
-            } else {
-                right.as_mut().unwrap().push();
-                let m = right.as_mut().unwrap().left.take();
-                right.as_mut().unwrap().left = Self::merge(left, m);
-                right.as_mut().unwrap().update();
-                right
-            }
+            right.as_mut().unwrap().push();
+            let m = right.as_mut().unwrap().left.take();
+            right.as_mut().unwrap().left = Self::merge(left, m);
+            right.as_mut().unwrap().update();
+            right
         }
     }
 
@@ -118,7 +116,7 @@ where
             return (None, None);
         }
         root.as_mut().unwrap().push();
-        if pos >= root.as_ref().unwrap().left.as_ref().map(|i| i.item.size()).unwrap_or(0) + 1 {
+        if pos > root.as_ref().unwrap().left.as_ref().map(|i| i.item.size()).unwrap_or(0) {
             let (a, b) = Self::split_at(
                 root.as_mut().unwrap().right.take(),
                 pos - root.as_ref().unwrap().left.as_ref().map(|i| i.item.size()).unwrap_or(0) - 1,
