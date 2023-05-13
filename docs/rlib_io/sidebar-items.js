@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["make_io","make_output_macro","make_output_macro_","out_impl"],"mod":["output_macro","reader","writer"]};

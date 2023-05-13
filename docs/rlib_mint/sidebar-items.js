@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Modular"],"type":["Mint107","Mint998"]};

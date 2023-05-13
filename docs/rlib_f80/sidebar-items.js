@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["f80_init"],"struct":["f80"]};
