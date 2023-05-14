@@ -78,3 +78,39 @@ fn common_mods() {
     assert_eq!(Mint998::md(), 998_244_353);
     assert_eq!(Mint107::md(), 1_000_000_007);
 }
+
+#[test]
+fn big_mod() {
+    type Mint = Modular<2_000_000_011>;
+
+    assert_eq!(
+        Mint::new(2_000_000_000) + Mint::new(2_000_000_000),
+        Mint::new(1_999_999_989)
+    );
+    assert_eq!(Mint::new(11) - Mint::new(15), Mint::new(2_000_000_007));
+    assert_eq!(Mint::new(15) - Mint::new(11), Mint::new(4));
+    assert_eq!(Mint::new(11) - Mint::new(2_000_000_000), Mint::new(22));
+    assert_eq!(Mint::new(2_000_000_010) - Mint::new(5), Mint::new(2_000_000_005));
+    assert_eq!(
+        Mint::new(2_000_000_000) * Mint::new(2_000_000_000),
+        Mint::new(2_000_000_000i64.pow(2))
+    );
+    let vals = (1..20)
+        .flat_map(|x| [x, -x, 1_000_000_010 + x].into_iter())
+        .chain([0])
+        .collect::<Vec<_>>();
+    for &x in vals.iter() {
+        if x != 0 {
+            assert_eq!(Mint::new(x).inv() * Mint::new(x), Mint::new(1));
+        }
+        assert_eq!(Mint::new(-x), -Mint::new(x));
+        for &y in vals.iter() {
+            assert_eq!(Mint::new(x) + Mint::new(y), Mint::new(x + y));
+            assert_eq!(Mint::new(x) - Mint::new(y), Mint::new(x - y));
+            assert_eq!(Mint::new(x) * Mint::new(y), Mint::new(x * y));
+            if y != 0 {
+                assert_eq!(Mint::new(x) / Mint::new(y) * Mint::new(y), Mint::new(x));
+            }
+        }
+    }
+}
