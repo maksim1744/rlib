@@ -152,25 +152,25 @@
 <span class="kw">use </span>rlib_io::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Copy, Clone, PartialEq, Eq)]
-</span><span class="kw">pub struct </span>Modular&lt;<span class="kw">const </span>M: i32&gt; {
-    v: i32,
+</span><span class="kw">pub struct </span>Modular&lt;<span class="kw">const </span>M: u32&gt; {
+    v: u32,
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Modular&lt;M&gt; {
     <span class="kw">pub const </span>ZERO: <span class="self">Self </span>= <span class="self">Self </span>{ v: <span class="number">0 </span>};
     <span class="kw">pub const </span>ONE: <span class="self">Self </span>= <span class="self">Self </span>{ v: <span class="number">1 </span>};
 
     <span class="kw">pub fn </span>new(v: i64) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>v = (v % M <span class="kw">as </span>i64) <span class="kw">as </span>i32;
         <span class="kw">if </span>v &lt; <span class="number">0 </span>{
-            v += M;
+            v += M <span class="kw">as </span>i32;
         }
-        <span class="self">Self </span>{ v }
+        <span class="self">Self </span>{ v: v <span class="kw">as </span>u32 }
     }
 
     <span class="kw">pub fn </span>inv(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>a = <span class="self">self</span>.v;
-        <span class="kw">let </span><span class="kw-2">mut </span>b = M;
+        <span class="kw">let </span><span class="kw-2">mut </span>a = <span class="self">self</span>.v <span class="kw">as </span>i32;
+        <span class="kw">let </span><span class="kw-2">mut </span>b = M <span class="kw">as </span>i32;
         <span class="kw">let </span><span class="kw-2">mut </span>x = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>y = <span class="number">1</span>;
         <span class="kw">while </span>a != <span class="number">0 </span>{
@@ -183,7 +183,7 @@
         <span class="self">Self</span>::new(x <span class="kw">as </span>i64)
     }
 
-    <span class="kw">pub fn </span>md() -&gt; i32 {
+    <span class="kw">pub fn </span>md() -&gt; u32 {
         M
     }
 
@@ -200,12 +200,12 @@
         res
     }
 
-    <span class="kw">pub fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; i32 {
+    <span class="kw">pub fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="self">self</span>.v
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Add <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Add <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
     <span class="kw">fn </span>add(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="self">self</span>.v + rhs.v;
@@ -215,80 +215,80 @@
         <span class="self">Self </span>{ v }
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; AddAssign <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; AddAssign <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
         <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>+ rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Sub <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Sub <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
     <span class="kw">fn </span>sub(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="self">self</span>.v - rhs.v;
-        <span class="kw">if </span>v &lt; <span class="number">0 </span>{
-            v += M;
+        <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="self">self</span>.v + <span class="self">Self</span>::md() - rhs.v;
+        <span class="kw">if </span>v &gt;= M {
+            v -= M;
         }
         <span class="self">Self </span>{ v }
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; SubAssign <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; SubAssign <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
         <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>- rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Mul <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Mul <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
     <span class="kw">fn </span>mul(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(<span class="self">self</span>.v <span class="kw">as </span>i64 * rhs.v <span class="kw">as </span>i64)
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; MulAssign <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; MulAssign <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
         <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>* rhs;
     }
 }
 
 <span class="attr">#[allow(clippy::suspicious_arithmetic_impl)]
-</span><span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Div <span class="kw">for </span>Modular&lt;M&gt; {
+</span><span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Div <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
     <span class="kw">fn </span>div(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self </span>* rhs.inv()
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; DivAssign <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; DivAssign <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
         <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>/ rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Neg <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Neg <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
     <span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>v = -<span class="self">self</span>.v;
-        <span class="kw">if </span>v &lt; <span class="number">0 </span>{
-            v += M;
+        <span class="kw">if </span><span class="self">self</span>.v == <span class="number">0 </span>{
+            <span class="self">self
+        </span>} <span class="kw">else </span>{
+            <span class="self">Self </span>{ v: <span class="self">Self</span>::md() - <span class="self">self</span>.v }
         }
-        <span class="self">Self </span>{ v }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Readable <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Readable <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>read(reader: <span class="kw-2">&amp;mut </span>Reader) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(reader.read())
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; Writable <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Writable <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>, writer: <span class="kw-2">&amp;mut </span>Writer) {
         <span class="self">self</span>.v.write(writer)
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; std::fmt::Display <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; std::fmt::Display <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
         <span class="self">self</span>.v.fmt(f)
     }
 }
-<span class="kw">impl</span>&lt;<span class="kw">const </span>M: i32&gt; std::fmt::Debug <span class="kw">for </span>Modular&lt;M&gt; {
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; std::fmt::Debug <span class="kw">for </span>Modular&lt;M&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
         <span class="self">self</span>.v.fmt(f)
     }
