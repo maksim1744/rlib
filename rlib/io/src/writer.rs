@@ -31,7 +31,7 @@ impl<'a> Writer<'a> {
         self.flush();
     }
 
-    fn flush(&mut self) {
+    pub fn flush(&mut self) {
         if self.end == 0 {
             return;
         }
