@@ -160,3 +160,18 @@ fn u32() {
     test_minmax_approx!(u32, 0..10, 1);
     test_minmax_approx!(u32, 42..420, 1);
 }
+
+#[test]
+fn shuffle() {
+    let mut v = (0..100000).collect::<Vec<_>>();
+    let mut rng = Rng::from_seed(42);
+    rng.shuffle(&mut v);
+
+    // check that shuffle touches both ends
+    assert_ne!(v[0], 0);
+    assert_ne!(v[v.len() - 1], v.len() - 1);
+
+    let cnt = v.into_iter().enumerate().filter(|(i, j)| i == j).count();
+    // EV is 1
+    assert!(cnt <= 5);
+}

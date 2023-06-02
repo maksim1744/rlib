@@ -1,4 +1,4 @@
-use rlib_rand::Rng;
+use rlib_rand::*;
 use rlib_treap::*;
 
 struct ItemSized {

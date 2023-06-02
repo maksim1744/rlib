@@ -1,5 +1,6 @@
 use std::time::SystemTime;
 
+use crate::rand::Rand;
 use crate::randomable::*;
 
 #[derive(Copy, Clone)]
@@ -25,8 +26,10 @@ impl<const A: u64, const C: u64> LinearCongruentialGenerator64<A, C> {
         self.state = self.state.wrapping_mul(A).wrapping_add(C);
         self.state
     }
+}
 
-    pub fn next<T, R>(&mut self, range: R) -> T
+impl<const A: u64, const C: u64> Rand for LinearCongruentialGenerator64<A, C> {
+    fn next<T, R>(&mut self, range: R) -> T
     where
         R: Randomable<T>,
     {
