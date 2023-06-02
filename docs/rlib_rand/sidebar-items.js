@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["lcg","randomable"],"type":["Rng"]};
+window.SIDEBAR_ITEMS = {"mod":["lcg","randomable"],"trait":["Rand"],"type":["Rng"]};

@@ -33,8 +33,12 @@
 <a href="#33" id="33">33</a>
 <a href="#34" id="34">34</a>
 <a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::time::SystemTime;
 
+<span class="kw">use </span><span class="kw">crate</span>::rand::Rand;
 <span class="kw">use </span><span class="kw">crate</span>::randomable::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Copy, Clone)]
@@ -60,8 +64,10 @@
         <span class="self">self</span>.state = <span class="self">self</span>.state.wrapping_mul(A).wrapping_add(C);
         <span class="self">self</span>.state
     }
+}
 
-    <span class="kw">pub fn </span>next&lt;T, R&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, range: R) -&gt; T
+<span class="kw">impl</span>&lt;<span class="kw">const </span>A: u64, <span class="kw">const </span>C: u64&gt; Rand <span class="kw">for </span>LinearCongruentialGenerator64&lt;A, C&gt; {
+    <span class="kw">fn </span>next&lt;T, R&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, range: R) -&gt; T
     <span class="kw">where
         </span>R: Randomable&lt;T&gt;,
     {

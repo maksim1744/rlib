@@ -7,7 +7,7 @@ var sourcesIndex = JSON.parse('{\
 "rlib_io":["",[],["lib.rs","output_macro.rs","reader.rs","writer.rs"]],\
 "rlib_iter":["",[],["lib.rs","masks.rs","neighbours.rs"]],\
 "rlib_mint":["",[],["lib.rs"]],\
-"rlib_rand":["",[],["lcg.rs","lib.rs","randomable.rs"]],\
+"rlib_rand":["",[],["lcg.rs","lib.rs","rand.rs","randomable.rs"]],\
 "rlib_rational":["",[],["lib.rs"]],\
 "rlib_segtree":["",[],["lib.rs","segtree.rs","segtree_items.rs"]],\
 "rlib_sieve":["",[],["lib.rs"]],\
