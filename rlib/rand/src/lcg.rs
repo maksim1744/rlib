@@ -1,7 +1,7 @@
 use std::time::SystemTime;
 
-use crate::rand::Rand;
 use crate::randomable::*;
+use crate::Rand;
 
 #[derive(Copy, Clone)]
 pub struct LinearCongruentialGenerator64<const A: u64, const C: u64> {
