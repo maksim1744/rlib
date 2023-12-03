@@ -1,4 +1,4 @@
-var sourcesIndex = JSON.parse('{\
+var srcIndex = JSON.parse('{\
 "rlib_bitset":["",[],["bits_iter.rs","bitset.rs","lib.rs"]],\
 "rlib_dsu":["",[],["lib.rs"]],\
 "rlib_f80":["",[],["lib.rs"]],\
@@ -14,4 +14,4 @@ var sourcesIndex = JSON.parse('{\
 "rlib_tensor":["",[],["lib.rs"]],\
 "rlib_treap":["",[],["lib.rs","print.rs","treap.rs","treap_node.rs"]]\
 }');
-createSourceSidebar();
+createSrcSidebar();
