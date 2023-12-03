@@ -80,14 +80,14 @@ fn string() {
     assert_eq!(&write("hello  world"), "hello  world");
 
     let s = ".,-=`'/]\\qwerty123!@#$%^&*()\"";
-    assert_eq!(write(s.clone()), s);
+    assert_eq!(write(s), s);
 
     // large string
     let s = (0..10_000_000)
         .map(|i| (i % 23 + 'a' as i32) as u8 as char)
         .collect::<String>();
-    assert!(write(s.clone()) == s);
+    assert_eq!(write(s.clone()), s);
 
     let s2 = ["123 ", &s, " 456"].concat();
-    assert!(write((123, s, 456)) == s2);
+    assert_eq!(write((123, s, 456)), s2);
 }

@@ -133,6 +133,6 @@ impl<T: SignedInteger> Ord for Rational<T> {
 
 impl<T: SignedInteger> PartialOrd for Rational<T> {
     fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
-        (*self - *rhs).a.partial_cmp(&T::ZERO)
+        Some(self.cmp(rhs))
     }
 }
