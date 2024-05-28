@@ -4,7 +4,7 @@ use rlib_f80::*;
 fn precision() {
     f80_init();
 
-    // 1 + 1e17 - 1 will give 0 in f64
+    // 1 + 1e17 - 1e17 will give 0 in f64
     let a = f80::from(1e17);
     let b = f80::from(1.);
     let c = a + b;

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/maksim1744/rlib"
 license = "MIT"
+rust-version = "1.56.1"
 
 [dependencies]
 rlib_integer = { path = "../integer" }
