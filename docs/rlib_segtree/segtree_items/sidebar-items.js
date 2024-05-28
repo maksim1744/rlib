@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Max","Min","Sum"]};
+window.SIDEBAR_ITEMS = {"struct":["Combinator","Max","MaxAdd","Min","MinAdd","Sum","SumAdd"]};
