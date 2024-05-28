@@ -264,32 +264,53 @@
 <a href="#262" id="262">262</a>
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::segtree::SegtreeItem;
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Implementations of [SegtreeItem] for common operations.
+
+</span><span class="kw">use </span>std::ops::{Add, AddAssign, Mul};
+
+<span class="kw">use </span><span class="kw">crate</span>::segtree::SegtreeItem;
 <span class="kw">use </span>rlib_integer::Integer;
 
-<span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>Min&lt;T&gt; {
+<span class="doccomment">/// Query min on a segment
+</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>Min&lt;T: PartialOrd + Clone&gt; {
     <span class="kw">pub </span>v: T,
 }
 
-<span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>Min&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; From&lt;T&gt; <span class="kw">for </span>Min&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; Min&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; Min&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v }
     }
 }
+
 <span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>Min&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MAX }
     }
 }
 
-<span class="kw">impl</span>&lt;T: std::cmp::PartialOrd + Clone&gt; SegtreeItem <span class="kw">for </span>Min&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; SegtreeItem <span class="kw">for </span>Min&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>left.v &lt; right.v {
             left.clone()
@@ -299,29 +320,31 @@
     }
 }
 
-<span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>Max&lt;T&gt; {
+<span class="doccomment">/// Query max on a segment
+</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>Max&lt;T: PartialOrd + Clone&gt; {
     <span class="kw">pub </span>v: T,
 }
 
-<span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>Max&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; From&lt;T&gt; <span class="kw">for </span>Max&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; Max&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; Max&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v }
     }
 }
+
 <span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>Max&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MIN }
     }
 }
 
-<span class="kw">impl</span>&lt;T: std::cmp::PartialOrd + Clone&gt; SegtreeItem <span class="kw">for </span>Max&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone&gt; SegtreeItem <span class="kw">for </span>Max&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>left.v &gt; right.v {
             left.clone()
@@ -331,29 +354,31 @@
     }
 }
 
-<span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>Sum&lt;T&gt; {
+<span class="doccomment">/// Query sum on a segment
+</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>Sum&lt;T: Add&lt;Output = T&gt; + Clone&gt; {
     <span class="kw">pub </span>v: T,
 }
 
-<span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>Sum&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Clone&gt; From&lt;T&gt; <span class="kw">for </span>Sum&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; Sum&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Clone&gt; Sum&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v }
     }
 }
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>Sum&lt;T&gt; {
+
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Clone + Default&gt; Default <span class="kw">for </span>Sum&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ v: T::ZERO }
+        <span class="self">Self</span>::new(T::default())
     }
 }
 
-<span class="kw">impl</span>&lt;T: std::ops::Add&lt;Output = T&gt; + Clone&gt; SegtreeItem <span class="kw">for </span>Sum&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Clone&gt; SegtreeItem <span class="kw">for </span>Sum&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             v: left.v.clone() + right.v.clone(),
@@ -361,145 +386,150 @@
     }
 }
 
-<span class="doccomment">/// Min on a segment, += on a segment
+<span class="doccomment">/// Query min on a segment, += on a segment
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>MinAdd&lt;T&gt; {
+</span><span class="kw">pub struct </span>MinAdd&lt;T: PartialOrd + AddAssign + Default + Clone&gt; {
     <span class="kw">pub </span>v: T,
     <span class="kw">pub </span>md: T,
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; From&lt;T&gt; <span class="kw">for </span>MinAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; From&lt;T&gt; <span class="kw">for </span>MinAdd&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; MinAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; MinAdd&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ v, md: T::ZERO }
+        <span class="self">Self </span>{ v, md: T::default() }
     }
 }
+
 <span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>MinAdd&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MAX, md: T::ZERO }
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>MinAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>MinAdd&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            v: left.v.min(right.v),
-            md: T::ZERO,
-        }
+        <span class="self">Self</span>::new(<span class="kw">if </span>left.v &lt; right.v {
+            left.v.clone()
+        } <span class="kw">else </span>{
+            right.v.clone()
+        })
     }
 
     <span class="kw">fn </span>modify(<span class="kw-2">&amp;mut </span><span class="self">self</span>, modifier: <span class="kw-2">&amp;</span>T) {
-        <span class="self">self</span>.v += <span class="kw-2">*</span>modifier;
-        <span class="self">self</span>.md += <span class="kw-2">*</span>modifier;
+        <span class="self">self</span>.v += modifier.clone();
+        <span class="self">self</span>.md += modifier.clone();
     }
 
     <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, left: <span class="kw-2">&amp;mut </span><span class="self">Self</span>, right: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
         left.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
         right.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
-        <span class="self">self</span>.md = T::ZERO;
+        <span class="self">self</span>.md = T::default();
     }
 }
 
-<span class="doccomment">/// Max on a segment, += on a segment
+<span class="doccomment">/// Query max on a segment, += on a segment
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>MaxAdd&lt;T: std::cmp::PartialOrd&gt; {
+</span><span class="kw">pub struct </span>MaxAdd&lt;T: PartialOrd + AddAssign + Default + Clone&gt; {
     <span class="kw">pub </span>v: T,
     <span class="kw">pub </span>md: T,
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; From&lt;T&gt; <span class="kw">for </span>MaxAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; From&lt;T&gt; <span class="kw">for </span>MaxAdd&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; MaxAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; MaxAdd&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ v, md: T::ZERO }
+        <span class="self">Self </span>{ v, md: T::default() }
     }
 }
+
 <span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>MaxAdd&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MIN, md: T::ZERO }
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>MaxAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>MaxAdd&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            v: left.v.max(right.v),
-            md: T::ZERO,
-        }
+        <span class="self">Self</span>::new(<span class="kw">if </span>left.v &gt; right.v {
+            left.v.clone()
+        } <span class="kw">else </span>{
+            right.v.clone()
+        })
     }
 
     <span class="kw">fn </span>modify(<span class="kw-2">&amp;mut </span><span class="self">self</span>, modifier: <span class="kw-2">&amp;</span>T) {
-        <span class="self">self</span>.v += <span class="kw-2">*</span>modifier;
-        <span class="self">self</span>.md += <span class="kw-2">*</span>modifier;
+        <span class="self">self</span>.v += modifier.clone();
+        <span class="self">self</span>.md += modifier.clone();
     }
 
     <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, left: <span class="kw-2">&amp;mut </span><span class="self">Self</span>, right: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
         left.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
         right.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
-        <span class="self">self</span>.md = T::ZERO;
+        <span class="self">self</span>.md = T::default();
     }
 }
 
-<span class="doccomment">/// Sum on a segment, += on a segment
+<span class="doccomment">/// Query sum on a segment, += on a segment
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>SumAdd&lt;T: std::cmp::PartialOrd&gt; {
+</span><span class="kw">pub struct </span>SumAdd&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone&gt; {
     <span class="kw">pub </span>v: T,
     <span class="kw">pub </span>len: T,
     <span class="kw">pub </span>md: T,
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; From&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + From&lt;i32&gt;&gt; From&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; SumAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + From&lt;i32&gt;&gt; SumAdd&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             v,
-            len: T::ONE,
-            md: T::ZERO,
-        }
-    }
-}
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>SumAdd&lt;T&gt; {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            v: T::ZERO,
-            len: T::ZERO,
-            md: T::ZERO,
+            len: <span class="number">1i32</span>.into(),
+            md: T::default(),
         }
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone&gt; Default <span class="kw">for </span>SumAdd&lt;T&gt; {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            v: T::default(),
+            len: T::default(),
+            md: T::default(),
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone&gt; SegtreeItem&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
     <span class="kw">fn </span>merge(left: <span class="kw-2">&amp;</span><span class="self">Self</span>, right: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            v: left.v + right.v,
-            len: left.len + right.len,
-            md: T::ZERO,
+            v: left.v.clone() + right.v.clone(),
+            len: left.len.clone() + right.len.clone(),
+            md: T::default(),
         }
     }
 
     <span class="kw">fn </span>modify(<span class="kw-2">&amp;mut </span><span class="self">self</span>, modifier: <span class="kw-2">&amp;</span>T) {
-        <span class="self">self</span>.v += <span class="kw-2">*</span>modifier * <span class="self">self</span>.len;
-        <span class="self">self</span>.md += <span class="kw-2">*</span>modifier;
+        <span class="self">self</span>.v = <span class="self">self</span>.v.clone() + modifier.clone() * <span class="self">self</span>.len.clone();
+        <span class="self">self</span>.md = <span class="self">self</span>.md.clone() + modifier.clone();
     }
 
     <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, left: <span class="kw-2">&amp;mut </span><span class="self">Self</span>, right: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
         left.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
         right.modify(<span class="kw-2">&amp;</span><span class="self">self</span>.md);
-        <span class="self">self</span>.md = T::ZERO;
+        <span class="self">self</span>.md = T::default();
     }
 }
 
