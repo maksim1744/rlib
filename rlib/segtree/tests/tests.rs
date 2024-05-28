@@ -1,5 +1,6 @@
 use rlib_rand::*;
 use rlib_segtree::*;
+use segtree_items::{Combinator, MaxAdd, MinAdd, SumAdd};
 
 const SIZES: [usize; 17] = [2, 3, 4, 5, 6, 7, 8, 9, 10, 31, 32, 33, 100, 127, 128, 129, 1];
 const TOTAL_ITS: usize = 1_000_000;
@@ -34,7 +35,7 @@ fn min() {
                 tree.set(ind, Min::new(val));
             } else if tp == 1 {
                 let (l, r) = gen_lr(&mut rng, n);
-                let correct = *ar[l..r + 1].iter().min().unwrap();
+                let correct = *ar[l..=r].iter().min().unwrap();
                 let result = tree.ask(l, r).v;
                 assert_eq!(correct, result);
             } else if tp == 2 {
@@ -68,7 +69,7 @@ fn max() {
                 tree.set(ind, Max::new(val));
             } else if tp == 1 {
                 let (l, r) = gen_lr(&mut rng, n);
-                let correct = *ar[l..r + 1].iter().max().unwrap();
+                let correct = *ar[l..=r].iter().max().unwrap();
                 let result = tree.ask(l, r).v;
                 assert_eq!(correct, result);
             } else if tp == 2 {
@@ -102,7 +103,7 @@ fn sum() {
                 tree.set(ind, Sum::new(val));
             } else if tp == 1 {
                 let (l, r) = gen_lr(&mut rng, n);
-                let correct = ar[l..r + 1].iter().sum::<i32>();
+                let correct = ar[l..=r].iter().sum::<i32>();
                 let result = tree.ask(l, r).v;
                 assert_eq!(correct, result);
             } else if tp == 2 {
@@ -153,7 +154,7 @@ fn substring() {
                 tree.set(ind, StringSum::new(val));
             } else {
                 let (l, r) = gen_lr(&mut rng, n);
-                let correct = ar[l..r + 1].iter().cloned().reduce(|a, b| [a, b].concat()).unwrap();
+                let correct = ar[l..=r].iter().cloned().reduce(|a, b| [a, b].concat()).unwrap();
                 let result = tree.ask(l, r).s;
                 assert_eq!(correct, result);
             }
@@ -161,73 +162,67 @@ fn substring() {
     }
 }
 
-#[derive(Clone)]
-struct SumAdd {
-    len: i64,
-    sum: i64,
-    md: i64,
-}
-
-impl SumAdd {
-    fn new(x: i64) -> Self {
-        Self { len: 1, sum: x, md: 0 }
-    }
-}
-
-impl SegtreeItem for SumAdd {
-    fn merge(left: &Self, right: &Self) -> Self {
-        Self {
-            len: left.len + right.len,
-            sum: left.sum + right.sum,
-            md: 0,
-        }
-    }
-}
-
-impl SegtreeItemLazy<i64> for SumAdd {
-    fn modify(&mut self, md: &i64) {
-        self.sum += md * self.len;
-        self.md += md;
-    }
-
-    fn push(&mut self, left: &mut Self, right: &mut Self) {
-        left.modify(&self.md);
-        right.modify(&self.md);
-        self.md = 0;
-    }
-}
-
 #[test]
-fn lazy_sum() {
+fn lazy_items() {
     let mut rng = Rng::from_seed(42);
 
     for &n in SIZES.iter() {
         let its = TOTAL_ITS / n; // each iteration will take O(n) in bruteforce
 
-        let mut tree = Segtree::new(n, SumAdd::new(0));
+        let mut sum_tree = Segtree::new(n, SumAdd::<i64>::new(0));
+        let mut min_tree = Segtree::new(n, MinAdd::<i64>::new(0));
+        let mut max_tree = Segtree::new(n, MaxAdd::<i64>::new(0));
+        let mut combinator_tree =
+            Segtree::<Combinator<SumAdd<i64>, Combinator<MinAdd<i64>, MaxAdd<i64>>>, i64>::new(n, 0.into());
         let mut ar: Vec<i64> = vec![0; n];
 
         for _ in 0..its {
-            let tp = rng.next(0..4);
+            let tp = rng.next(0..5);
             if tp == 0 {
                 let ind = rng.next(0..n);
                 let val = rng.next(i32::MIN / n as i32..i32::MAX / n as i32) as i64;
                 ar[ind] = val;
-                tree.set(ind, SumAdd::new(val));
+                sum_tree.set(ind, val.into());
+                min_tree.set(ind, val.into());
+                max_tree.set(ind, val.into());
+                combinator_tree.set(ind, val.into());
             } else if tp == 1 {
                 let (l, r) = gen_lr(&mut rng, n);
-                let correct = ar[l..r + 1].iter().sum::<i64>();
-                let result = tree.ask(l, r).sum;
-                assert_eq!(correct, result);
+                {
+                    let correct = ar[l..=r].iter().sum::<i64>();
+                    let result = sum_tree.ask(l, r).v;
+                    assert_eq!(correct, result);
+                }
+                {
+                    let correct = *ar[l..=r].iter().min().unwrap();
+                    let result = min_tree.ask(l, r).v;
+                    assert_eq!(correct, result);
+                }
+                {
+                    let correct = *ar[l..=r].iter().max().unwrap();
+                    let result = max_tree.ask(l, r).v;
+                    assert_eq!(correct, result);
+                }
             } else if tp == 2 {
-                tree = Segtree::from_slice(&ar.iter().map(|&x| SumAdd::new(x)).collect::<Vec<_>>());
-            } else if tp == 3 {
                 let (l, r) = gen_lr(&mut rng, n);
                 let val = rng.next(i32::MIN / n as i32..i32::MAX / n as i32) as i64;
                 for i in l..=r {
                     ar[i] += val;
                 }
-                tree.modify(l, r, &val);
+                sum_tree.modify(l, r, &val);
+                min_tree.modify(l, r, &val);
+                max_tree.modify(l, r, &val);
+                combinator_tree.modify(l, r, &val);
+            } else if tp == 3 {
+                sum_tree = Segtree::from_slice(&ar.iter().copied().map(SumAdd::new).collect::<Vec<_>>());
+                min_tree = Segtree::from_slice(&ar.iter().copied().map(MinAdd::new).collect::<Vec<_>>());
+                max_tree = Segtree::from_slice(&ar.iter().copied().map(MaxAdd::new).collect::<Vec<_>>());
+                combinator_tree = Segtree::from_slice(&ar.iter().copied().map(Combinator::from).collect::<Vec<_>>());
+            } else if tp == 4 {
+                sum_tree = Segtree::from_iter(ar.iter().copied().map(SumAdd::new));
+                min_tree = Segtree::from_iter(ar.iter().copied().map(MinAdd::new));
+                max_tree = Segtree::from_iter(ar.iter().copied().map(MaxAdd::new));
+                combinator_tree = Segtree::from_iter(ar.iter().copied().map(Combinator::from));
             } else {
                 assert!(false);
             }

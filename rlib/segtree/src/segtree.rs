@@ -1,19 +1,14 @@
-pub trait SegtreeItem: Sized {
+use std::fmt::Debug;
+
+pub trait SegtreeItem<M = ()>: Sized {
     fn merge(left: &Self, right: &Self) -> Self;
 
     fn update(&mut self, left: &Self, right: &Self) {
         *self = Self::merge(left, right);
     }
-}
 
-pub trait SegtreeItemLazy<T>: SegtreeItem {
-    fn modify(&mut self, modifier: &T);
+    fn modify(&mut self, _modifier: &M) {}
 
-    fn push(&mut self, left: &mut Self, right: &mut Self);
-}
-
-impl<T: SegtreeItem> SegtreeItemLazy<()> for T {
-    fn modify(&mut self, _modifier: &()) {}
     fn push(&mut self, _left: &mut Self, _right: &mut Self) {}
 }
 
@@ -23,7 +18,7 @@ pub struct Segtree<T, M> {
     phantom: std::marker::PhantomData<M>,
 }
 
-impl<M, T: Clone + SegtreeItemLazy<M>> Segtree<T, M> {
+impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
     pub fn new_raw(n: usize, value: T) -> Self {
         assert!(n != 0);
         let mut p2: usize = 1;
@@ -171,5 +166,11 @@ impl<M, T: Clone + SegtreeItemLazy<M>> Segtree<T, M> {
 
         let (left, right) = self.data.split_at_mut(i * 2 + 1);
         left[i].update(&right[0], &right[1]);
+    }
+}
+
+impl<T: Debug + Clone + SegtreeItem<M>, M: Debug> Segtree<T, M> {
+    pub fn debug(&mut self) -> String {
+        format!("{:?}", (0..self.n).map(|i| self.ask(i, i)).collect::<Vec<_>>())
     }
 }
