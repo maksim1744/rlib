@@ -18,7 +18,7 @@ pub struct Segtree<T, M> {
     phantom: std::marker::PhantomData<M>,
 }
 
-impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
+impl<M, T: SegtreeItem<M> + Clone> Segtree<T, M> {
     pub fn new_raw(n: usize, value: T) -> Self {
         assert!(n != 0);
         let mut p2: usize = 1;
@@ -65,8 +65,7 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
         self.rebuild(i * 2 + 1, l, m, data);
         self.rebuild(i * 2 + 2, m + 1, r, data);
 
-        let (left, right) = self.data.split_at_mut(i * 2 + 1);
-        left[i].update(&right[0], &right[1]);
+        self.merge_at(i);
     }
 
     fn rebuild_empty(&mut self, i: usize, l: usize, r: usize) {
@@ -91,11 +90,7 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
             self.data[i] = value;
             return;
         }
-        {
-            let (left, right) = self.data.split_at_mut(i * 2 + 1);
-            let (r1, r2) = right.split_at_mut(1);
-            left[i].push(&mut r1[0], &mut r2[0]);
-        }
+        self.push_at(i);
 
         let m = (vl + vr) / 2;
         if ind <= m {
@@ -104,8 +99,7 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
             self.set_internal(ind, value, i * 2 + 2, m + 1, vr);
         }
 
-        let (left, right) = self.data.split_at_mut(i * 2 + 1);
-        left[i].update(&right[0], &right[1]);
+        self.merge_at(i);
     }
 
     pub fn ask(&mut self, l: usize, r: usize) -> T {
@@ -118,11 +112,7 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
         if l == vl && r == vr {
             return self.data[i].clone();
         }
-        {
-            let (left, right) = self.data.split_at_mut(i * 2 + 1);
-            let (r1, r2) = right.split_at_mut(1);
-            left[i].push(&mut r1[0], &mut r2[0]);
-        }
+        self.push_at(i);
 
         let m = (vl + vr) / 2;
         if r <= m {
@@ -148,11 +138,7 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
             self.data[i].modify(md);
             return;
         }
-        {
-            let (left, right) = self.data.split_at_mut(i * 2 + 1);
-            let (r1, r2) = right.split_at_mut(1);
-            left[i].push(&mut r1[0], &mut r2[0]);
-        }
+        self.push_at(i);
 
         let m = (vl + vr) / 2;
         if r <= m {
@@ -164,8 +150,109 @@ impl<M, T: Clone + SegtreeItem<M>> Segtree<T, M> {
             self.modify_internal(m + 1, r, md, i * 2 + 2, m + 1, vr);
         }
 
+        self.merge_at(i);
+    }
+
+    fn push_at(&mut self, i: usize) {
+        let (left, right) = self.data.split_at_mut(i * 2 + 1);
+        let (r1, r2) = right.split_at_mut(1);
+        left[i].push(&mut r1[0], &mut r2[0]);
+    }
+
+    fn merge_at(&mut self, i: usize) {
         let (left, right) = self.data.split_at_mut(i * 2 + 1);
         left[i].update(&right[0], &right[1]);
+    }
+}
+
+impl<M, T: SegtreeItem<M> + Clone + Default> Segtree<T, M> {
+    /// Returns smallest r from `[l; n-1]` such that `f(ask(l, r)) == true`, or None if it's always false
+    pub fn lower_bound<F>(&mut self, l: usize, f: F) -> Option<usize>
+    where
+        F: Fn(&T) -> bool,
+    {
+        self.lower_bound_internal(T::default(), &f, l, self.n - 1, 0, 0, self.n - 1)
+            .1
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn lower_bound_internal<F>(
+        &mut self,
+        mut item: T,
+        f: &F,
+        l: usize,
+        r: usize,
+        i: usize,
+        vl: usize,
+        vr: usize,
+    ) -> (T, Option<usize>)
+    where
+        F: Fn(&T) -> bool,
+    {
+        if l == vl && r == vr {
+            let next = T::merge(&item, &self.data[i]);
+            if !f(&next) {
+                return (next, None);
+            }
+            if vl == vr {
+                return (next, Some(vl));
+            }
+        }
+        self.push_at(i);
+
+        let m = (vl + vr) / 2;
+        if l <= m {
+            let (left_item, left_res) = self.lower_bound_internal(item, f, l, m, i * 2 + 1, vl, m);
+            if left_res.is_some() {
+                return (left_item, left_res);
+            }
+            item = left_item;
+        }
+        self.lower_bound_internal(item, f, l.max(m + 1), r, i * 2 + 2, m + 1, vr)
+    }
+    /// Returns largest l from `[0; r]` such that `f(ask(l, r)) == true`, or None if it's always false
+    pub fn lower_bound_rev<F>(&mut self, r: usize, f: F) -> Option<usize>
+    where
+        F: Fn(&T) -> bool,
+    {
+        self.lower_bound_rev_internal(T::default(), &f, 0, r, 0, 0, self.n - 1)
+            .1
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn lower_bound_rev_internal<F>(
+        &mut self,
+        mut item: T,
+        f: &F,
+        l: usize,
+        r: usize,
+        i: usize,
+        vl: usize,
+        vr: usize,
+    ) -> (T, Option<usize>)
+    where
+        F: Fn(&T) -> bool,
+    {
+        if l == vl && r == vr {
+            let next = T::merge(&self.data[i], &item);
+            if !f(&next) {
+                return (next, None);
+            }
+            if vl == vr {
+                return (next, Some(vl));
+            }
+        }
+        self.push_at(i);
+
+        let m = (vl + vr) / 2;
+        if r > m {
+            let (right_item, right_res) = self.lower_bound_rev_internal(item, f, m + 1, r, i * 2 + 2, m + 1, vr);
+            if right_res.is_some() {
+                return (right_item, right_res);
+            }
+            item = right_item;
+        }
+        self.lower_bound_rev_internal(item, f, l, r.min(m), i * 2 + 1, vl, m)
     }
 }
 

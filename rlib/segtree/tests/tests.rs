@@ -229,3 +229,62 @@ fn lazy_items() {
         }
     }
 }
+
+#[test]
+fn lower_bound() {
+    let mut rng = Rng::from_seed(42);
+
+    for &n in SIZES.iter() {
+        let its = TOTAL_ITS / n; // each iteration will take O(n) in bruteforce
+
+        let mut tree = Segtree::new(n, SumAdd::<i64>::new(0));
+        let mut ar: Vec<i64> = vec![0; n];
+
+        for _ in 0..its {
+            let tp = rng.next(0..4);
+            if tp == 0 {
+                let ind = rng.next(0..n);
+                let val = rng.next(0..10) as i64;
+                ar[ind] = val;
+                tree.set(ind, val.into());
+            } else if tp == 1 {
+                let l = rng.next(0..n);
+                let val = rng.next(0..1000) as i64;
+                let mut correct: Option<usize> = None;
+                let mut sm = 0;
+                for i in l..n {
+                    sm += ar[i];
+                    if sm >= val {
+                        correct = Some(i);
+                        break;
+                    }
+                }
+                let result = tree.lower_bound(l, |it| it.v >= val);
+                assert_eq!(correct, result);
+            } else if tp == 2 {
+                let r = rng.next(0..n);
+                let val = rng.next(0..1000) as i64;
+                let mut correct: Option<usize> = None;
+                let mut sm = 0;
+                for i in (0..=r).rev() {
+                    sm += ar[i];
+                    if sm >= val {
+                        correct = Some(i);
+                        break;
+                    }
+                }
+                let result = tree.lower_bound_rev(r, |it| it.v >= val);
+                assert_eq!(correct, result);
+            } else if tp == 3 {
+                let (l, r) = gen_lr(&mut rng, n);
+                let val = rng.next(0..10) as i64;
+                for i in l..=r {
+                    ar[i] += val;
+                }
+                tree.modify(l, r, &val);
+            } else {
+                assert!(false);
+            }
+        }
+    }
+}
