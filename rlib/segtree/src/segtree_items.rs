@@ -1,29 +1,35 @@
+//! Implementations of [SegtreeItem] for common operations.
+
+use std::ops::{Add, AddAssign, Mul};
+
 use crate::segtree::SegtreeItem;
 use rlib_integer::Integer;
 
+/// Query min on a segment
 #[derive(Clone, Debug)]
-pub struct Min<T> {
+pub struct Min<T: PartialOrd + Clone> {
     pub v: T,
 }
 
-impl<T> From<T> for Min<T> {
+impl<T: PartialOrd + Clone> From<T> for Min<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T> Min<T> {
+impl<T: PartialOrd + Clone> Min<T> {
     pub fn new(v: T) -> Self {
         Self { v }
     }
 }
+
 impl<T: Integer> Default for Min<T> {
     fn default() -> Self {
         Self { v: T::MAX }
     }
 }
 
-impl<T: std::cmp::PartialOrd + Clone> SegtreeItem for Min<T> {
+impl<T: PartialOrd + Clone> SegtreeItem for Min<T> {
     fn merge(left: &Self, right: &Self) -> Self {
         if left.v < right.v {
             left.clone()
@@ -33,29 +39,31 @@ impl<T: std::cmp::PartialOrd + Clone> SegtreeItem for Min<T> {
     }
 }
 
+/// Query max on a segment
 #[derive(Clone, Debug)]
-pub struct Max<T> {
+pub struct Max<T: PartialOrd + Clone> {
     pub v: T,
 }
 
-impl<T> From<T> for Max<T> {
+impl<T: PartialOrd + Clone> From<T> for Max<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T> Max<T> {
+impl<T: PartialOrd + Clone> Max<T> {
     pub fn new(v: T) -> Self {
         Self { v }
     }
 }
+
 impl<T: Integer> Default for Max<T> {
     fn default() -> Self {
         Self { v: T::MIN }
     }
 }
 
-impl<T: std::cmp::PartialOrd + Clone> SegtreeItem for Max<T> {
+impl<T: PartialOrd + Clone> SegtreeItem for Max<T> {
     fn merge(left: &Self, right: &Self) -> Self {
         if left.v > right.v {
             left.clone()
@@ -65,29 +73,31 @@ impl<T: std::cmp::PartialOrd + Clone> SegtreeItem for Max<T> {
     }
 }
 
+/// Query sum on a segment
 #[derive(Clone, Debug)]
-pub struct Sum<T> {
+pub struct Sum<T: Add<Output = T> + Clone> {
     pub v: T,
 }
 
-impl<T> From<T> for Sum<T> {
+impl<T: Add<Output = T> + Clone> From<T> for Sum<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T> Sum<T> {
+impl<T: Add<Output = T> + Clone> Sum<T> {
     pub fn new(v: T) -> Self {
         Self { v }
     }
 }
-impl<T: Integer> Default for Sum<T> {
+
+impl<T: Add<Output = T> + Clone + Default> Default for Sum<T> {
     fn default() -> Self {
-        Self { v: T::ZERO }
+        Self::new(T::default())
     }
 }
 
-impl<T: std::ops::Add<Output = T> + Clone> SegtreeItem for Sum<T> {
+impl<T: Add<Output = T> + Clone> SegtreeItem for Sum<T> {
     fn merge(left: &Self, right: &Self) -> Self {
         Self {
             v: left.v.clone() + right.v.clone(),
@@ -95,145 +105,150 @@ impl<T: std::ops::Add<Output = T> + Clone> SegtreeItem for Sum<T> {
     }
 }
 
-/// Min on a segment, += on a segment
+/// Query min on a segment, += on a segment
 #[derive(Clone, Debug)]
-pub struct MinAdd<T> {
+pub struct MinAdd<T: PartialOrd + AddAssign + Default + Clone> {
     pub v: T,
     pub md: T,
 }
 
-impl<T: Integer> From<T> for MinAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> From<T> for MinAdd<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T: Integer> MinAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> MinAdd<T> {
     pub fn new(v: T) -> Self {
-        Self { v, md: T::ZERO }
+        Self { v, md: T::default() }
     }
 }
+
 impl<T: Integer> Default for MinAdd<T> {
     fn default() -> Self {
         Self { v: T::MAX, md: T::ZERO }
     }
 }
 
-impl<T: Integer + Clone> SegtreeItem<T> for MinAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> SegtreeItem<T> for MinAdd<T> {
     fn merge(left: &Self, right: &Self) -> Self {
-        Self {
-            v: left.v.min(right.v),
-            md: T::ZERO,
-        }
+        Self::new(if left.v < right.v {
+            left.v.clone()
+        } else {
+            right.v.clone()
+        })
     }
 
     fn modify(&mut self, modifier: &T) {
-        self.v += *modifier;
-        self.md += *modifier;
+        self.v += modifier.clone();
+        self.md += modifier.clone();
     }
 
     fn push(&mut self, left: &mut Self, right: &mut Self) {
         left.modify(&self.md);
         right.modify(&self.md);
-        self.md = T::ZERO;
+        self.md = T::default();
     }
 }
 
-/// Max on a segment, += on a segment
+/// Query max on a segment, += on a segment
 #[derive(Clone, Debug)]
-pub struct MaxAdd<T: std::cmp::PartialOrd> {
+pub struct MaxAdd<T: PartialOrd + AddAssign + Default + Clone> {
     pub v: T,
     pub md: T,
 }
 
-impl<T: Integer> From<T> for MaxAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> From<T> for MaxAdd<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T: Integer> MaxAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> MaxAdd<T> {
     pub fn new(v: T) -> Self {
-        Self { v, md: T::ZERO }
+        Self { v, md: T::default() }
     }
 }
+
 impl<T: Integer> Default for MaxAdd<T> {
     fn default() -> Self {
         Self { v: T::MIN, md: T::ZERO }
     }
 }
 
-impl<T: Integer + Clone> SegtreeItem<T> for MaxAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone> SegtreeItem<T> for MaxAdd<T> {
     fn merge(left: &Self, right: &Self) -> Self {
-        Self {
-            v: left.v.max(right.v),
-            md: T::ZERO,
-        }
+        Self::new(if left.v > right.v {
+            left.v.clone()
+        } else {
+            right.v.clone()
+        })
     }
 
     fn modify(&mut self, modifier: &T) {
-        self.v += *modifier;
-        self.md += *modifier;
+        self.v += modifier.clone();
+        self.md += modifier.clone();
     }
 
     fn push(&mut self, left: &mut Self, right: &mut Self) {
         left.modify(&self.md);
         right.modify(&self.md);
-        self.md = T::ZERO;
+        self.md = T::default();
     }
 }
 
-/// Sum on a segment, += on a segment
+/// Query sum on a segment, += on a segment
 #[derive(Clone, Debug)]
-pub struct SumAdd<T: std::cmp::PartialOrd> {
+pub struct SumAdd<T: Add<Output = T> + Mul<Output = T> + Default + Clone> {
     pub v: T,
     pub len: T,
     pub md: T,
 }
 
-impl<T: Integer> From<T> for SumAdd<T> {
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + From<i32>> From<T> for SumAdd<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T: Integer> SumAdd<T> {
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + From<i32>> SumAdd<T> {
     pub fn new(v: T) -> Self {
         Self {
             v,
-            len: T::ONE,
-            md: T::ZERO,
-        }
-    }
-}
-impl<T: Integer> Default for SumAdd<T> {
-    fn default() -> Self {
-        Self {
-            v: T::ZERO,
-            len: T::ZERO,
-            md: T::ZERO,
+            len: 1i32.into(),
+            md: T::default(),
         }
     }
 }
 
-impl<T: Integer + Clone> SegtreeItem<T> for SumAdd<T> {
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone> Default for SumAdd<T> {
+    fn default() -> Self {
+        Self {
+            v: T::default(),
+            len: T::default(),
+            md: T::default(),
+        }
+    }
+}
+
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone> SegtreeItem<T> for SumAdd<T> {
     fn merge(left: &Self, right: &Self) -> Self {
         Self {
-            v: left.v + right.v,
-            len: left.len + right.len,
-            md: T::ZERO,
+            v: left.v.clone() + right.v.clone(),
+            len: left.len.clone() + right.len.clone(),
+            md: T::default(),
         }
     }
 
     fn modify(&mut self, modifier: &T) {
-        self.v += *modifier * self.len;
-        self.md += *modifier;
+        self.v = self.v.clone() + modifier.clone() * self.len.clone();
+        self.md = self.md.clone() + modifier.clone();
     }
 
     fn push(&mut self, left: &mut Self, right: &mut Self) {
         left.modify(&self.md);
         right.modify(&self.md);
-        self.md = T::ZERO;
+        self.md = T::default();
     }
 }
 

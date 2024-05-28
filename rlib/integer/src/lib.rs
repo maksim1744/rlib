@@ -19,6 +19,7 @@ pub trait Integer:
     + Copy
     + Clone
     + Sized
+    + Default
 {
     type Unsigned: Integer;
     type Signed: Integer;
