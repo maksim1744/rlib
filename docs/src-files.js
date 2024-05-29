@@ -5,6 +5,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["rlib_gcd",["",[],["lib.rs"]]],\
 ["rlib_io",["",[],["lib.rs","output_macro.rs","reader.rs","writer.rs"]]],\
 ["rlib_iter",["",[],["lib.rs","masks.rs","neighbours.rs"]]],\
+["rlib_lambda",["",[],["lib.rs"]]],\
 ["rlib_mint",["",[],["lib.rs"]]],\
 ["rlib_num_traits",["",[],["lib.rs"]]],\
 ["rlib_rand",["",[],["lcg.rs","lib.rs","mrand.rs","randomable.rs"]]],\

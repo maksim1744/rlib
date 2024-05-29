@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["_rec_lambda_0_","_rec_lambda_1_","_rec_lambda_2_","rec_lambda"]};
