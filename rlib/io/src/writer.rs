@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use rlib_integer::Integer;
+use rlib_num_traits::FixedSizeInteger;
 
 pub struct Writer<'a> {
     buf: [u8; Writer::BUF_SIZE],
@@ -99,7 +99,7 @@ macro_rules! write_unsigned {
                     return;
                 }
 
-                let mut buf = [0; <$t as Integer>::BASE_10_LEN];
+                let mut buf = [0; <$t as FixedSizeInteger>::BASE_10_LEN];
                 let mut index = buf.len();
                 let mut value = *self;
                 while value != 0 {

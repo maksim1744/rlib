@@ -3,7 +3,7 @@
 use std::ops::{Add, AddAssign, Mul};
 
 use crate::segtree::SegtreeItem;
-use rlib_integer::Integer;
+use rlib_num_traits::{MinMax, ZeroOne};
 
 /// Query min on a segment
 #[derive(Clone, Debug)]
@@ -23,7 +23,7 @@ impl<T: PartialOrd + Clone> Min<T> {
     }
 }
 
-impl<T: Integer> Default for Min<T> {
+impl<T: PartialOrd + Clone + MinMax> Default for Min<T> {
     fn default() -> Self {
         Self { v: T::MAX }
     }
@@ -57,7 +57,7 @@ impl<T: PartialOrd + Clone> Max<T> {
     }
 }
 
-impl<T: Integer> Default for Max<T> {
+impl<T: PartialOrd + Clone + MinMax> Default for Max<T> {
     fn default() -> Self {
         Self { v: T::MIN }
     }
@@ -124,9 +124,12 @@ impl<T: PartialOrd + AddAssign + Default + Clone> MinAdd<T> {
     }
 }
 
-impl<T: Integer> Default for MinAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone + MinMax> Default for MinAdd<T> {
     fn default() -> Self {
-        Self { v: T::MAX, md: T::ZERO }
+        Self {
+            v: T::MAX,
+            md: T::default(),
+        }
     }
 }
 
@@ -170,9 +173,12 @@ impl<T: PartialOrd + AddAssign + Default + Clone> MaxAdd<T> {
     }
 }
 
-impl<T: Integer> Default for MaxAdd<T> {
+impl<T: PartialOrd + AddAssign + Default + Clone + MinMax> Default for MaxAdd<T> {
     fn default() -> Self {
-        Self { v: T::MIN, md: T::ZERO }
+        Self {
+            v: T::MIN,
+            md: T::default(),
+        }
     }
 }
 
@@ -205,17 +211,17 @@ pub struct SumAdd<T: Add<Output = T> + Mul<Output = T> + Default + Clone> {
     pub md: T,
 }
 
-impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + From<i32>> From<T> for SumAdd<T> {
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + ZeroOne> From<T> for SumAdd<T> {
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + From<i32>> SumAdd<T> {
+impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone + ZeroOne> SumAdd<T> {
     pub fn new(v: T) -> Self {
         Self {
             v,
-            len: 1i32.into(),
+            len: T::ONE,
             md: T::default(),
         }
     }
@@ -256,7 +262,7 @@ impl<T: Add<Output = T> + Mul<Output = T> + Default + Clone> SegtreeItem<T> for 
 #[derive(Clone, Debug, Default)]
 pub struct Combinator<U, V>(pub U, pub V);
 
-impl<T: Integer, U: From<T>, V: From<T>> From<T> for Combinator<U, V> {
+impl<T: Copy, U: From<T>, V: From<T>> From<T> for Combinator<U, V> {
     fn from(v: T) -> Self {
         Self(U::from(v), V::from(v))
     }

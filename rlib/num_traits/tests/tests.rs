@@ -1,4 +1,4 @@
-use rlib_integer::*;
+use rlib_num_traits::*;
 
 #[test]
 fn base_10_len() {

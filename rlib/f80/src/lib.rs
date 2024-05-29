@@ -8,6 +8,8 @@
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 use std::cmp::Ordering;
 
+use rlib_num_traits::ZeroOne;
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(align(16))]
 #[allow(non_camel_case_types)]
@@ -135,9 +137,6 @@ impl PartialOrd<f80> for f80 {
 }
 
 impl f80 {
-    pub const ZERO: f80 = f80([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    pub const ONE: f80 = f80([0, 0, 0, 0, 0, 0, 0, 128, 255, 63]);
-
     pub fn abs(self) -> f80 {
         if self < f80::from(0.) {
             -self
@@ -185,6 +184,11 @@ impl f80 {
     }
 }
 
+impl ZeroOne for f80 {
+    const ZERO: f80 = f80([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const ONE: f80 = f80([0, 0, 0, 0, 0, 0, 0, 128, 255, 63]);
+}
+
 impl From<f80> for f64 {
     fn from(f: f80) -> Self {
         let mut res = core::mem::MaybeUninit::<f64>::uninit();
@@ -219,7 +223,7 @@ impl From<f64> for f80 {
 
 impl Default for f80 {
     fn default() -> Self {
-        f80::from(0.)
+        f80::ZERO
     }
 }
 

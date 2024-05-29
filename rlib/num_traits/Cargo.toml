@@ -1,5 +1,5 @@
 [package]
-name = "rlib_integer"
+name = "rlib_num_traits"
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/maksim1744/rlib"

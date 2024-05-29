@@ -1,4 +1,5 @@
 use rlib_f80::*;
+use rlib_num_traits::ZeroOne;
 
 #[test]
 fn precision() {

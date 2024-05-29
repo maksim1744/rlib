@@ -8,4 +8,4 @@ rust-version = "1.56.1"
 
 [dependencies]
 rlib_rand = { path = "../rand" }
-rlib_integer = { path = "../integer" }
+rlib_num_traits = { path = "../num_traits" }
