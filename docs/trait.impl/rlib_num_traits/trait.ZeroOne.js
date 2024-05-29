@@ -1,0 +1,5 @@
+(function() {var implementors = {
+"rlib_f80":[["impl <a class=\"trait\" href=\"rlib_num_traits/trait.ZeroOne.html\" title=\"trait rlib_num_traits::ZeroOne\">ZeroOne</a> for <a class=\"struct\" href=\"rlib_f80/struct.f80.html\" title=\"struct rlib_f80::f80\">f80</a>"]],
+"rlib_num_traits":[],
+"rlib_rational":[["impl&lt;T: <a class=\"trait\" href=\"rlib_num_traits/trait.ZeroOne.html\" title=\"trait rlib_num_traits::ZeroOne\">ZeroOne</a>&gt; <a class=\"trait\" href=\"rlib_num_traits/trait.ZeroOne.html\" title=\"trait rlib_num_traits::ZeroOne\">ZeroOne</a> for <a class=\"struct\" href=\"rlib_rational/struct.Rational.html\" title=\"struct rlib_rational::Rational\">Rational</a>&lt;T&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

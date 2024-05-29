@@ -33,37 +33,41 @@
 <a href="#31" id="31">31</a>
 <a href="#32" id="32">32</a>
 <a href="#33" id="33">33</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>rlib_integer::<span class="kw-2">*</span>;
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>rlib_num_traits::<span class="kw-2">*</span>;
 
 <span class="kw">pub fn </span>gcd&lt;T: Integer&gt;(a: T, b: T) -&gt; T {
-    <span class="kw">let </span><span class="kw-2">mut </span>a = a.abs();
-    <span class="kw">let </span><span class="kw-2">mut </span>b = b.abs();
+    <span class="kw">let </span><span class="kw-2">mut </span>a = a.into_abs();
+    <span class="kw">let </span><span class="kw-2">mut </span>b = b.into_abs();
     <span class="kw">while </span>b != T::ZERO {
-        a %= b;
+        a %= <span class="kw-2">&amp;</span>b;
         std::mem::swap(<span class="kw-2">&amp;mut </span>a, <span class="kw-2">&amp;mut </span>b);
     }
     a
 }
 
 <span class="kw">pub fn </span>lcm&lt;T: Integer&gt;(a: T, b: T) -&gt; T {
-    a.abs() / gcd(a, b) * b.abs()
+    <span class="kw">let </span>b_abs = b.abs();
+    a.abs() / <span class="kw-2">&amp;</span>gcd(a, b) * <span class="kw-2">&amp;</span>b_abs
 }
 
-<span class="kw">pub fn </span>egcd&lt;T: Integer&gt;(a: T, b: T, c: T) -&gt; (T, T) {
+<span class="kw">pub fn </span>egcd&lt;T: Integer&gt;(a: T, b: T, c: T) -&gt; <span class="prelude-ty">Option</span>&lt;(T, T)&gt; {
     <span class="kw">if </span>a == T::ZERO {
-        <span class="macro">assert!</span>(c % b == T::ZERO);
-        <span class="kw">return </span>(T::ZERO, c / b);
+        <span class="kw">if </span>c.clone() % <span class="kw-2">&amp;</span>b != T::ZERO {
+            <span class="kw">return </span><span class="prelude-val">None</span>;
+        }
+        <span class="kw">return </span><span class="prelude-val">Some</span>((T::ZERO, c / <span class="kw-2">&amp;</span>b));
     }
-    <span class="kw">let </span>(y0, x0) = egcd(b % a, a, c);
-    (x0 - (b / a) * y0, y0)
+    <span class="kw">let </span>(y0, x0) = egcd(b.clone() % <span class="kw-2">&amp;</span>a, a.clone(), c)<span class="question-mark">?</span>;
+    <span class="prelude-val">Some</span>((x0 - <span class="kw-2">&amp;</span>((b / <span class="kw-2">&amp;</span>a) * <span class="kw-2">&amp;</span>y0), y0))
 }
 
-<span class="kw">pub fn </span>crt&lt;T: Integer + std::ops::Neg&lt;Output = T&gt;&gt;(a1: T, m1: T, a2: T, m2: T) -&gt; T {
-    <span class="kw">let </span>g = gcd(m1, m2);
-    <span class="macro">assert!</span>(a1 % g == a2 % g);
-    <span class="kw">let </span>(x, <span class="kw">_</span>) = egcd(m1, -m2, a2 - a1);
-    <span class="kw">let </span>m2 = m2 / g;
-    <span class="kw">let </span>x = (x % m2 + m2) % m2;
-    m1 * x + a1
+<span class="kw">pub fn </span>crt&lt;T: Integer + std::ops::Neg&lt;Output = T&gt;&gt;(a1: T, m1: T, a2: T, m2: T) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
+    <span class="kw">let </span>g = gcd(m1.clone(), m2.clone());
+    <span class="kw">let </span>(x, <span class="kw">_</span>) = egcd(m1.clone(), -m2.clone(), a2 - <span class="kw-2">&amp;</span>a1)<span class="question-mark">?</span>;
+    <span class="kw">let </span>m2 = m2 / <span class="kw-2">&amp;</span>g;
+    <span class="kw">let </span>x = (x % <span class="kw-2">&amp;</span>m2 + <span class="kw-2">&amp;</span>m2) % <span class="kw-2">&amp;</span>m2;
+    <span class="prelude-val">Some</span>(m1 * <span class="kw-2">&amp;</span>x + <span class="kw-2">&amp;</span>a1)
 }
 </code></pre></div></section></main></body></html>

@@ -236,6 +236,10 @@
 <a href="#234" id="234">234</a>
 <a href="#235" id="235">235</a>
 <a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
 </pre></div><pre class="rust"><code><span class="comment">// Mostly was made by Hegdahl (https://github.com/Hegdahl)
 
 // Make sure to call f80_init() in the beginning of fn main(),
@@ -245,6 +249,8 @@
 
 </span><span class="kw">use </span>core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 <span class="kw">use </span>std::cmp::Ordering;
+
+<span class="kw">use </span>rlib_num_traits::ZeroOne;
 
 <span class="attr">#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(align(<span class="number">16</span>))]
@@ -373,9 +379,6 @@
 }
 
 <span class="kw">impl </span>f80 {
-    <span class="kw">pub const </span>ZERO: f80 = f80([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
-    <span class="kw">pub const </span>ONE: f80 = f80([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">255</span>, <span class="number">63</span>]);
-
     <span class="kw">pub fn </span>abs(<span class="self">self</span>) -&gt; f80 {
         <span class="kw">if </span><span class="self">self </span>&lt; f80::from(<span class="number">0.</span>) {
             -<span class="self">self
@@ -423,6 +426,11 @@
     }
 }
 
+<span class="kw">impl </span>ZeroOne <span class="kw">for </span>f80 {
+    <span class="kw">const </span>ZERO: f80 = f80([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
+    <span class="kw">const </span>ONE: f80 = f80([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">255</span>, <span class="number">63</span>]);
+}
+
 <span class="kw">impl </span>From&lt;f80&gt; <span class="kw">for </span>f64 {
     <span class="kw">fn </span>from(f: f80) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>res = core::mem::MaybeUninit::&lt;f64&gt;::uninit();
@@ -457,7 +465,7 @@
 
 <span class="kw">impl </span>Default <span class="kw">for </span>f80 {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        f80::from(<span class="number">0.</span>)
+        f80::ZERO
     }
 }
 

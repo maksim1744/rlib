@@ -279,12 +279,18 @@
 <a href="#277" id="277">277</a>
 <a href="#278" id="278">278</a>
 <a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Implementations of [SegtreeItem] for common operations.
 
 </span><span class="kw">use </span>std::ops::{Add, AddAssign, Mul};
 
 <span class="kw">use </span><span class="kw">crate</span>::segtree::SegtreeItem;
-<span class="kw">use </span>rlib_integer::Integer;
+<span class="kw">use </span>rlib_num_traits::{MinMax, ZeroOne};
 
 <span class="doccomment">/// Query min on a segment
 </span><span class="attr">#[derive(Clone, Debug)]
@@ -304,7 +310,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>Min&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone + MinMax&gt; Default <span class="kw">for </span>Min&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MAX }
     }
@@ -338,7 +344,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>Max&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + Clone + MinMax&gt; Default <span class="kw">for </span>Max&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ v: T::MIN }
     }
@@ -405,9 +411,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>MinAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone + MinMax&gt; Default <span class="kw">for </span>MinAdd&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ v: T::MAX, md: T::ZERO }
+        <span class="self">Self </span>{
+            v: T::MAX,
+            md: T::default(),
+        }
     }
 }
 
@@ -451,9 +460,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: Integer&gt; Default <span class="kw">for </span>MaxAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: PartialOrd + AddAssign + Default + Clone + MinMax&gt; Default <span class="kw">for </span>MaxAdd&lt;T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ v: T::MIN, md: T::ZERO }
+        <span class="self">Self </span>{
+            v: T::MIN,
+            md: T::default(),
+        }
     }
 }
 
@@ -486,17 +498,17 @@
     <span class="kw">pub </span>md: T,
 }
 
-<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + From&lt;i32&gt;&gt; From&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + ZeroOne&gt; From&lt;T&gt; <span class="kw">for </span>SumAdd&lt;T&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(v)
     }
 }
 
-<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + From&lt;i32&gt;&gt; SumAdd&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: Add&lt;Output = T&gt; + Mul&lt;Output = T&gt; + Default + Clone + ZeroOne&gt; SumAdd&lt;T&gt; {
     <span class="kw">pub fn </span>new(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             v,
-            len: <span class="number">1i32</span>.into(),
+            len: T::ONE,
             md: T::default(),
         }
     }
@@ -537,7 +549,7 @@
 </span><span class="attr">#[derive(Clone, Debug, Default)]
 </span><span class="kw">pub struct </span>Combinator&lt;U, V&gt;(<span class="kw">pub </span>U, <span class="kw">pub </span>V);
 
-<span class="kw">impl</span>&lt;T: Integer, U: From&lt;T&gt;, V: From&lt;T&gt;&gt; From&lt;T&gt; <span class="kw">for </span>Combinator&lt;U, V&gt; {
+<span class="kw">impl</span>&lt;T: Copy, U: From&lt;T&gt;, V: From&lt;T&gt;&gt; From&lt;T&gt; <span class="kw">for </span>Combinator&lt;U, V&gt; {
     <span class="kw">fn </span>from(v: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(U::from(v), V::from(v))
     }

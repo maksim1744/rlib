@@ -3,10 +3,10 @@ var srcIndex = new Map(JSON.parse('[\
 ["rlib_dsu",["",[],["lib.rs"]]],\
 ["rlib_f80",["",[],["lib.rs"]]],\
 ["rlib_gcd",["",[],["lib.rs"]]],\
-["rlib_integer",["",[],["lib.rs"]]],\
 ["rlib_io",["",[],["lib.rs","output_macro.rs","reader.rs","writer.rs"]]],\
 ["rlib_iter",["",[],["lib.rs","masks.rs","neighbours.rs"]]],\
 ["rlib_mint",["",[],["lib.rs"]]],\
+["rlib_num_traits",["",[],["lib.rs"]]],\
 ["rlib_rand",["",[],["lcg.rs","lib.rs","mrand.rs","randomable.rs"]]],\
 ["rlib_rational",["",[],["lib.rs"]]],\
 ["rlib_segtree",["",[],["lib.rs","segtree.rs","segtree_items.rs"]]],\

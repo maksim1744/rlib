@@ -138,14 +138,63 @@
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::cmp::<span class="kw-2">*</span>;
-<span class="kw">use </span>std::ops::<span class="kw-2">*</span>;
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+    cmp::<span class="kw-2">*</span>,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+};
 
 <span class="kw">use </span>rlib_gcd::<span class="kw-2">*</span>;
-<span class="kw">use </span>rlib_integer::<span class="kw-2">*</span>;
+<span class="kw">use </span>rlib_num_traits::<span class="kw-2">*</span>;
 
-<span class="kw">pub trait </span>SignedInteger: Integer + std::ops::Neg&lt;Output = <span class="self">Self</span>&gt; + Copy {}
-<span class="kw">impl</span>&lt;T: Integer + std::ops::Neg&lt;Output = <span class="self">Self</span>&gt; + Copy&gt; SignedInteger <span class="kw">for </span>T {}
+<span class="kw">pub trait </span>SignedInteger: Integer + Neg&lt;Output = <span class="self">Self</span>&gt; {}
+<span class="kw">impl</span>&lt;T: Integer + Neg&lt;Output = <span class="self">Self</span>&gt;&gt; SignedInteger <span class="kw">for </span>T {}
 
 <span class="attr">#[derive(Clone, Copy, Hash, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>Rational&lt;T&gt; {
@@ -154,9 +203,6 @@
 }
 
 <span class="kw">impl</span>&lt;T: SignedInteger&gt; Rational&lt;T&gt; {
-    <span class="kw">pub const </span>ZERO: <span class="self">Self </span>= <span class="self">Self </span>{ a: T::ZERO, b: T::ONE };
-    <span class="kw">pub const </span>ONE: <span class="self">Self </span>= <span class="self">Self </span>{ a: T::ONE, b: T::ONE };
-
     <span class="kw">pub fn </span>new(a: T, b: T) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>r = <span class="self">Self </span>{ a, b };
         r.norm();
@@ -170,12 +216,12 @@
     <span class="kw">pub fn </span>floor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span><span class="self">self</span>.a &gt;= T::ZERO {
             <span class="self">Self </span>{
-                a: <span class="self">self</span>.a / <span class="self">self</span>.b,
+                a: <span class="self">self</span>.a.clone() / <span class="kw-2">&amp;</span><span class="self">self</span>.b,
                 b: T::ONE,
             }
         } <span class="kw">else </span>{
             <span class="self">Self </span>{
-                a: (<span class="self">self</span>.a - <span class="self">self</span>.b + T::ONE) / <span class="self">self</span>.b,
+                a: (<span class="self">self</span>.a.clone() - <span class="kw-2">&amp;</span><span class="self">self</span>.b + <span class="kw-2">&amp;</span>T::ONE) / <span class="kw-2">&amp;</span><span class="self">self</span>.b,
                 b: T::ONE,
             }
         }
@@ -184,75 +230,123 @@
     <span class="kw">pub fn </span>ceil(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span><span class="self">self</span>.a &gt;= T::ZERO {
             <span class="self">Self </span>{
-                a: (<span class="self">self</span>.a + <span class="self">self</span>.b - T::ONE) / <span class="self">self</span>.b,
+                a: (<span class="self">self</span>.a.clone() + <span class="kw-2">&amp;</span><span class="self">self</span>.b - <span class="kw-2">&amp;</span>T::ONE) / <span class="kw-2">&amp;</span><span class="self">self</span>.b,
                 b: T::ONE,
             }
         } <span class="kw">else </span>{
             <span class="self">Self </span>{
-                a: <span class="self">self</span>.a / <span class="self">self</span>.b,
+                a: <span class="self">self</span>.a.clone() / <span class="kw-2">&amp;</span><span class="self">self</span>.b,
                 b: T::ONE,
             }
         }
     }
 
     <span class="kw">fn </span>norm(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>g = gcd(<span class="self">self</span>.a, <span class="self">self</span>.b);
-        <span class="self">self</span>.a /= g;
-        <span class="self">self</span>.b /= g;
+        <span class="kw">let </span>g = gcd(<span class="self">self</span>.a.clone(), <span class="self">self</span>.b.clone());
+        <span class="self">self</span>.a /= <span class="kw-2">&amp;</span>g;
+        <span class="self">self</span>.b /= <span class="kw-2">&amp;</span>g;
         <span class="kw">if </span><span class="self">self</span>.b &lt; T::ZERO {
-            <span class="self">self</span>.b = -<span class="self">self</span>.b;
-            <span class="self">self</span>.a = -<span class="self">self</span>.a;
+            <span class="comment">// surely there is a better way
+            </span><span class="kw">let </span><span class="kw-2">mut </span>x = T::ZERO;
+            std::mem::swap(<span class="kw-2">&amp;mut </span>x, <span class="kw-2">&amp;mut </span><span class="self">self</span>.b);
+            <span class="self">self</span>.b = -x;
+            <span class="kw">let </span><span class="kw-2">mut </span>x = T::ZERO;
+            std::mem::swap(<span class="kw-2">&amp;mut </span>x, <span class="kw-2">&amp;mut </span><span class="self">self</span>.a);
+            <span class="self">self</span>.a = -x;
         }
     }
 }
 
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; Add <span class="kw">for </span>Rational&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: ZeroOne&gt; ZeroOne <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">const </span>ZERO: <span class="self">Self </span>= <span class="self">Self </span>{ a: T::ZERO, b: T::ONE };
+    <span class="kw">const </span>ONE: <span class="self">Self </span>= <span class="self">Self </span>{ a: T::ONE, b: T::ONE };
+}
+
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; Add&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
-    <span class="kw">fn </span>add(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::new(<span class="self">self</span>.a * rhs.b + <span class="self">self</span>.b * rhs.a, <span class="self">self</span>.b * rhs.b)
+    <span class="kw">fn </span>add(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(<span class="self">self</span>.a * <span class="kw-2">&amp;</span>rhs.b + <span class="kw-2">&amp;</span>(<span class="self">self</span>.b.clone() * <span class="kw-2">&amp;</span>rhs.a), <span class="self">self</span>.b * <span class="kw-2">&amp;</span>rhs.b)
     }
 }
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; AddAssign <span class="kw">for </span>Rational&lt;T&gt; {
-    <span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>+ rhs;
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; AddAssign&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">fn </span>add_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="kw-2">*</span><span class="self">self </span>= <span class="self">self</span>.clone() + rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; Sub <span class="kw">for </span>Rational&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; Sub&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
-    <span class="kw">fn </span>sub(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::new(<span class="self">self</span>.a * rhs.b - <span class="self">self</span>.b * rhs.a, <span class="self">self</span>.b * rhs.b)
+    <span class="kw">fn </span>sub(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(<span class="self">self</span>.a * <span class="kw-2">&amp;</span>rhs.b - <span class="kw-2">&amp;</span>(<span class="self">self</span>.b.clone() * <span class="kw-2">&amp;</span>rhs.a), <span class="self">self</span>.b * <span class="kw-2">&amp;</span>rhs.b)
     }
 }
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; SubAssign <span class="kw">for </span>Rational&lt;T&gt; {
-    <span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>- rhs;
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; SubAssign&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">fn </span>sub_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="kw-2">*</span><span class="self">self </span>= <span class="self">self</span>.clone() - rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; Mul <span class="kw">for </span>Rational&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; Mul&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
-    <span class="kw">fn </span>mul(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::new(<span class="self">self</span>.a * rhs.a, <span class="self">self</span>.b * rhs.b)
+    <span class="kw">fn </span>mul(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(<span class="self">self</span>.a * <span class="kw-2">&amp;</span>rhs.a, <span class="self">self</span>.b * <span class="kw-2">&amp;</span>rhs.b)
     }
 }
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; MulAssign <span class="kw">for </span>Rational&lt;T&gt; {
-    <span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>* rhs;
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; MulAssign&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">fn </span>mul_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="kw-2">*</span><span class="self">self </span>= <span class="self">self</span>.clone() * rhs;
     }
 }
 
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; Div <span class="kw">for </span>Rational&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; Div&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
-    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::new(<span class="self">self</span>.a * rhs.b, <span class="self">self</span>.b * rhs.a)
+    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(<span class="self">self</span>.a * <span class="kw-2">&amp;</span>rhs.b, <span class="self">self</span>.b * <span class="kw-2">&amp;</span>rhs.a)
     }
 }
-<span class="kw">impl</span>&lt;T: SignedInteger&gt; DivAssign <span class="kw">for </span>Rational&lt;T&gt; {
-    <span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= <span class="kw-2">*</span><span class="self">self </span>/ rhs;
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; DivAssign&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="kw-2">*</span><span class="self">self </span>= <span class="self">self</span>.clone() / rhs;
     }
 }
+
+<span class="kw">impl</span>&lt;T: SignedInteger&gt; Neg <span class="kw">for </span>Rational&lt;T&gt; {
+    <span class="kw">type </span>Output = <span class="self">Self</span>;
+    <span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ a: -<span class="self">self</span>.a, b: <span class="self">self</span>.b }
+    }
+}
+
+<span class="macro">macro_rules!</span> impl_copy_op {
+    (<span class="macro-nonterminal">$op</span>:ty, <span class="macro-nonterminal">$func</span>:tt) =&gt; {
+        <span class="kw">impl</span>&lt;T: SignedInteger + Copy&gt; <span class="macro-nonterminal">$op </span><span class="kw">for </span>Rational&lt;T&gt; {
+            <span class="kw">type </span>Output = <span class="self">Self</span>;
+            <span class="kw">fn </span><span class="macro-nonterminal">$func</span>(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+                (<span class="kw-2">&amp;</span><span class="self">self</span>).<span class="macro-nonterminal">$func</span>(<span class="kw-2">&amp;</span>rhs)
+            }
+        }
+    };
+}
+
+<span class="macro">impl_copy_op!</span>(Add, add);
+<span class="macro">impl_copy_op!</span>(Sub, sub);
+<span class="macro">impl_copy_op!</span>(Mul, mul);
+<span class="macro">impl_copy_op!</span>(Div, div);
+
+<span class="macro">macro_rules!</span> impl_copy_assign_op {
+    (<span class="macro-nonterminal">$op</span>:ty, <span class="macro-nonterminal">$func</span>:tt) =&gt; {
+        <span class="kw">impl</span>&lt;T: SignedInteger + Copy&gt; <span class="macro-nonterminal">$op </span><span class="kw">for </span>Rational&lt;T&gt; {
+            <span class="kw">fn </span><span class="macro-nonterminal">$func</span>(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
+                <span class="self">self</span>.<span class="macro-nonterminal">$func</span>(<span class="kw-2">&amp;</span>rhs);
+            }
+        }
+    };
+}
+
+<span class="macro">impl_copy_assign_op!</span>(AddAssign, add_assign);
+<span class="macro">impl_copy_assign_op!</span>(SubAssign, sub_assign);
+<span class="macro">impl_copy_assign_op!</span>(MulAssign, mul_assign);
+<span class="macro">impl_copy_assign_op!</span>(DivAssign, div_assign);
 
 <span class="kw">impl</span>&lt;T: SignedInteger + std::fmt::Display&gt; std::fmt::Display <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
@@ -267,7 +361,7 @@
 
 <span class="kw">impl</span>&lt;T: SignedInteger&gt; Ord <span class="kw">for </span>Rational&lt;T&gt; {
     <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
-        (<span class="kw-2">*</span><span class="self">self </span>- <span class="kw-2">*</span>rhs).a.cmp(<span class="kw-2">&amp;</span>T::ZERO)
+        (<span class="self">self</span>.clone() - rhs).a.cmp(<span class="kw-2">&amp;</span>T::ZERO)
     }
 }
 
