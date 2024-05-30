@@ -2,6 +2,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["rlib_bitset",["",[],["bits_iter.rs","bitset.rs","lib.rs"]]],\
 ["rlib_dsu",["",[],["lib.rs"]]],\
 ["rlib_f80",["",[],["lib.rs"]]],\
+["rlib_fft",["",[],["complex.rs","fft.rs","lib.rs","precision.rs"]]],\
 ["rlib_gcd",["",[],["lib.rs"]]],\
 ["rlib_io",["",[],["lib.rs","output_macro.rs","reader.rs","writer.rs"]]],\
 ["rlib_iter",["",[],["lib.rs","masks.rs","neighbours.rs"]]],\

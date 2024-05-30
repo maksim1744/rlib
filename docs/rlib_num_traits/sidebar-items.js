@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["FixedSizeInteger","Integer","MinMax","ZeroOne"]};
+window.SIDEBAR_ITEMS = {"trait":["FixedSizeInteger","Float","Integer","MinMax","ZeroOne"]};
