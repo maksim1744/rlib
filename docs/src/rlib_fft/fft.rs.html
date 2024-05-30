@@ -264,7 +264,6 @@
 <a href="#262" id="262">262</a>
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>rlib_num_traits::{Float, ZeroOne};
 
 <span class="kw">use </span><span class="kw">crate</span>::Complex;
@@ -453,19 +452,19 @@
         <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n, <span class="bool-val">false</span>);
         <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span><span class="self">self</span>.bufs[<span class="number">0</span>];
 
+        <span class="kw">let </span>i8 = Complex::I / F::from_usize(<span class="number">8</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..=(n &gt;&gt; <span class="number">1</span>) {
             <span class="comment">// a --fft--&gt; a1 + a2*i
             // b --fft--&gt; b1 + b2*i
             // fact: FFT(a)[k] = FFT(a)[n - k].conj()
             // using this we can get formulas for FFT(a) and FFT(b) from FFT(a+bi)
-            // (some calculations are moved to the next for-loop for the purpose of optimization)
+            // (some calculations are moved from the next for-loop for the purpose of optimization)
 
             </span><span class="kw">let </span>j = (n - i) &amp; (n - <span class="number">1</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj());
-            std::mem::swap(<span class="kw-2">&amp;mut </span>v.x, <span class="kw-2">&amp;mut </span>v.y);
+            <span class="kw">let </span>v = (buf[i] + buf[j].conj()) * (buf[j].conj() - buf[i]) * i8;
 
-            buf[i] = v.conj();
-            buf[j] = v;
+            buf[i] = v;
+            buf[j] = v.conj();
         }
 
         <span class="comment">// we know that Im(c)=0 and we know fft(c)
@@ -473,13 +472,12 @@
         // then c'(x^2) = (c(x) + c(-x)) / 2 + (c(x) - c(-x)) / 2x * i
         // and knowing values of c at some x-s (which is precisely fft(c)), we can calculate fft(c')
 
-        </span><span class="kw">let </span>i8 = F::ONE / F::from_usize(<span class="number">8</span>);
-        <span class="kw">let </span>max_n = <span class="self">self</span>.reversed.len();
+        </span><span class="kw">let </span>max_n = <span class="self">self</span>.reversed.len();
         <span class="kw">let </span>step = max_n / n;
         <span class="kw">let </span>start = max_n - (max_n &gt;&gt; <span class="number">2</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..(n &gt;&gt; <span class="number">1</span>) {
             <span class="kw">let </span>j = i + (n &gt;&gt; <span class="number">1</span>);
-            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * <span class="self">self</span>.w[start - step * i]) * i8;
+            buf[i] = buf[i] + buf[j] - (buf[i] - buf[j]) * <span class="self">self</span>.w[start - step * i];
         }
 
         buf.truncate(n &gt;&gt; <span class="number">1</span>);
