@@ -63,8 +63,8 @@ jobs:
         with:
           fetch-depth: 0
       - run: |
-          cargo doc
-          export FIRST_PACKAGE=`cargo metadata --no-deps --format-version=1 | jq -r '.packages[] | .name' | head -n 1`
+          cargo doc --no-deps --lib
+          export FIRST_PACKAGE=`cargo metadata --no-deps --format-version=1 | jq -r '.packages[] | .name' | grep rlib | head -n 1`
           echo "<meta http-equiv=\"refresh\" content=\"0; url=$FIRST_PACKAGE/index.html\">" > target/doc/index.html
           cp -r target/doc ./tmpdocs
           git config user.email "you@example.com"

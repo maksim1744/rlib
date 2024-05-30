@@ -1,12 +1,13 @@
 [package]
-name = "rlib_bitset"
+name = "rlib_fft"
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/maksim1744/rlib"
 license = "MIT"
-rust-version = "1.56.1"
+rust-version = "1.67.0"
 
 [dependencies]
+rlib_num_traits = { path = "../num_traits" }
 
 [dev-dependencies]
 rlib_rand = { path = "../rand" }

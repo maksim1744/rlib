@@ -58,6 +58,36 @@ pub trait FixedSizeInteger:
     fn unsigned_abs(self) -> Self::Unsigned;
 }
 
+pub trait Float:
+    Add<Output = Self>
+    + AddAssign
+    + Sub<Output = Self>
+    + SubAssign
+    + Div<Output = Self>
+    + DivAssign
+    + Mul<Output = Self>
+    + MulAssign
+    + Neg<Output = Self>
+    + ZeroOne
+    + PartialEq
+    + PartialOrd
+    + Clone
+    + Copy
+    + Default
+    + Sized
+{
+    const PI: Self;
+
+    fn sin(&self) -> Self;
+    fn cos(&self) -> Self;
+    fn sqrt(&self) -> Self;
+    fn abs(&self) -> Self;
+
+    fn from_usize(x: usize) -> Self;
+    fn from_i32(x: i32) -> Self;
+    fn to_i64(&self) -> i64;
+}
+
 macro_rules! integer_common {
     ($it:ty, $ut:ty, $len:expr) => {
         type Unsigned = $ut;
@@ -146,3 +176,37 @@ fixed_size_integer!(isize, usize);
 
 impl_zomm!(i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize);
 impl_zomm!(f32, f64);
+
+macro_rules! impl_float {
+    ($t:ty, $pi:expr) => {
+        impl Float for $t {
+            const PI: Self = $pi;
+
+            fn sin(&self) -> Self {
+                <$t>::sin(*self)
+            }
+            fn cos(&self) -> Self {
+                <$t>::cos(*self)
+            }
+            fn sqrt(&self) -> Self {
+                <$t>::sqrt(*self)
+            }
+            fn abs(&self) -> Self {
+                <$t>::abs(*self)
+            }
+
+            fn from_usize(x: usize) -> Self {
+                x as $t
+            }
+            fn from_i32(x: i32) -> Self {
+                x as $t
+            }
+            fn to_i64(&self) -> i64 {
+                self.round() as i64
+            }
+        }
+    };
+}
+
+impl_float!(f32, std::f32::consts::PI);
+impl_float!(f64, std::f64::consts::PI);

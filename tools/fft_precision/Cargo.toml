@@ -1,0 +1,9 @@
+[package]
+name = "precision_tools"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rlib_fft = { "path" = "../../rlib/fft" }
+rlib_rand = { "path" = "../../rlib/rand" }
+threadpool = "1.8.1"
