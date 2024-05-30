@@ -1,19 +1,19 @@
 use rlib_fft::{
     multiply_verify,
-    precision::{CORRECT_F64_BOUNDS, VALS_TO_CHECK},
+    precision::{CORRECT_F32_BOUNDS, CORRECT_F64_BOUNDS, VALS_TO_CHECK},
     FFT,
 };
+use rlib_num_traits::Float;
 use rlib_rand::{Rand, Rng};
 
-#[test]
-fn precision() {
+fn test_precision<F: Float>(bounds: &[[f64; VALS_TO_CHECK.len()]; VALS_TO_CHECK.len()]) {
     const BACKS: [i32; 2] = [0, 1000];
 
     let mut rng = Rng::from_seed(42);
-    let mut fft = FFT::<f64>::new();
+    let mut fft = FFT::<F>::new();
     for (ai, &amax) in VALS_TO_CHECK.iter().enumerate() {
         for (bi, &bmax) in VALS_TO_CHECK.iter().enumerate() {
-            let len = CORRECT_F64_BOUNDS[ai][bi] as usize / 2;
+            let len = bounds[ai][bi] as usize;
             if len == 0 {
                 continue;
             }
@@ -21,10 +21,10 @@ fn precision() {
                 continue;
             }
             // assume transitivity
-            if ai + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai + 1][bi] as usize / 2 == len {
+            if ai + 1 < VALS_TO_CHECK.len() && bounds[ai + 1][bi] as usize == len {
                 continue;
             }
-            if bi + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai][bi + 1] as usize / 2 == len {
+            if bi + 1 < VALS_TO_CHECK.len() && bounds[ai][bi + 1] as usize == len {
                 continue;
             }
             for &aback in BACKS.iter() {
@@ -41,4 +41,14 @@ fn precision() {
             }
         }
     }
+}
+
+#[test]
+fn precision_f32() {
+    test_precision::<f32>(&CORRECT_F32_BOUNDS);
+}
+
+#[test]
+fn precision_f64() {
+    test_precision::<f64>(&CORRECT_F64_BOUNDS);
 }

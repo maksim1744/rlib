@@ -186,19 +186,19 @@ impl<F: Float> FFT<F> {
         self.fft_internal::<0>(0, n, false);
         let buf = &mut self.bufs[0];
 
+        let i8 = Complex::I / F::from_usize(8);
         for i in 0..=(n >> 1) {
             // a --fft--> a1 + a2*i
             // b --fft--> b1 + b2*i
             // fact: FFT(a)[k] = FFT(a)[n - k].conj()
             // using this we can get formulas for FFT(a) and FFT(b) from FFT(a+bi)
-            // (some calculations are moved to the next for-loop for the purpose of optimization)
+            // (some calculations are moved from the next for-loop for the purpose of optimization)
 
             let j = (n - i) & (n - 1);
-            let mut v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj());
-            std::mem::swap(&mut v.x, &mut v.y);
+            let v = (buf[i] + buf[j].conj()) * (buf[j].conj() - buf[i]) * i8;
 
-            buf[i] = v.conj();
-            buf[j] = v;
+            buf[i] = v;
+            buf[j] = v.conj();
         }
 
         // we know that Im(c)=0 and we know fft(c)
@@ -206,13 +206,12 @@ impl<F: Float> FFT<F> {
         // then c'(x^2) = (c(x) + c(-x)) / 2 + (c(x) - c(-x)) / 2x * i
         // and knowing values of c at some x-s (which is precisely fft(c)), we can calculate fft(c')
 
-        let i8 = F::ONE / F::from_usize(8);
         let max_n = self.reversed.len();
         let step = max_n / n;
         let start = max_n - (max_n >> 2);
         for i in 0..(n >> 1) {
             let j = i + (n >> 1);
-            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * self.w[start - step * i]) * i8;
+            buf[i] = buf[i] + buf[j] - (buf[i] - buf[j]) * self.w[start - step * i];
         }
 
         buf.truncate(n >> 1);

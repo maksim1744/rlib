@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use rlib_num_traits::{Float, ZeroOne};
 
@@ -110,6 +110,13 @@ impl<F: Float> DivAssign for Complex<F> {
         let res = *self / rhs;
         self.x = res.x;
         self.y = res.y;
+    }
+}
+
+impl<F: Float> Neg for Complex<F> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Self { x: -self.x, y: -self.y }
     }
 }
 

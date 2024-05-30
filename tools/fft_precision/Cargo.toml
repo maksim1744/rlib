@@ -7,4 +7,3 @@ rust-version = "1.70.0"
 [dependencies]
 rlib_fft = { "path" = "../../rlib/fft" }
 rlib_rand = { "path" = "../../rlib/rand" }
-threadpool = "1.8.1"

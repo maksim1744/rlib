@@ -17,6 +17,9 @@ fn simple() {
     let a = C::new(3., -4.);
     let b = C::new(-2., 10.);
 
+    assert_eq!(a.conj(), C::new(3., 4.));
+    assert_eq!(-a, C::new(-3., 4.));
+
     assert_eq!(a + b, C::new(1., 6.));
     assert_eq!(a - b, C::new(5., -14.));
     assert_eq!(a * b, C::new(34., 38.));
