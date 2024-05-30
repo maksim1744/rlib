@@ -261,6 +261,10 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>rlib_num_traits::{Float, ZeroOne};
 
 <span class="kw">use </span><span class="kw">crate</span>::Complex;
@@ -410,7 +414,11 @@
         buf.truncate(n &gt;&gt; <span class="number">1</span>);
         <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n &gt;&gt; <span class="number">1</span>, <span class="bool-val">true</span>);
         res.iter_mut()
-            .zip((<span class="number">0</span>..n).flat_map(|i| [<span class="self">self</span>.bufs[<span class="number">0</span>][i].x.round().to_i64(), <span class="self">self</span>.bufs[<span class="number">0</span>][i].y.round().to_i64()]))
+            .zip(
+                <span class="self">self</span>.bufs[<span class="number">0</span>]
+                    .iter()
+                    .flat_map(|c| [c.x.round().to_i64(), c.y.round().to_i64()]),
+            )
             .for_each(|(x, y)| <span class="kw-2">*</span>x += y);
     }
 
