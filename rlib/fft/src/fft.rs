@@ -33,14 +33,14 @@ impl<F: Float> FFT<F> {
             for i in cur..(cur << 1) {
                 self.reversed[i] = self.reversed[i - cur] ^ 1;
             }
-            for i in (1..=(cur << 1) - 2).rev().step_by(2) {
+            (1..=(cur << 1) - 2).rev().step_by(2).for_each(|i| {
                 self.w[i] = self.w[i / 2];
-            }
+            });
             let icur = F::ONE / F::from_usize(cur);
-            for i in (1..(cur << 1)).step_by(2) {
+            (1..(cur << 1)).step_by(2).for_each(|i| {
                 let x = F::PI * F::from_usize(i) * icur;
                 self.w[i] = Complex::new(x.cos(), x.sin())
-            }
+            });
             cur *= 2;
         }
         *self.w.last_mut().unwrap() = Complex::ONE;
@@ -61,7 +61,7 @@ impl<F: Float> FFT<F> {
         let mut ln = 1;
         while ln < n {
             let step: isize = (if inv { -(max_n as isize) } else { max_n as isize }) / (ln as isize * 2);
-            for i in (0..n).step_by(ln << 1) {
+            (0..n).step_by(ln << 1).for_each(|i| {
                 let mut ind: isize = if inv { max_n as isize } else { 0 };
                 for j in 0..ln {
                     let y = v[i + j + ln] * self.w[ind as usize];
@@ -69,7 +69,7 @@ impl<F: Float> FFT<F> {
                     v[i + j + ln] = v[i + j] - y;
                     v[i + j] += y;
                 }
-            }
+            });
             ln <<= 1;
         }
 
@@ -81,9 +81,68 @@ impl<F: Float> FFT<F> {
         }
     }
 
+    pub fn fft(&mut self, v: &[i32], mut n: usize) -> Vec<Complex<F>> {
+        if n == 0 {
+            n = 1;
+            while n < v.len() {
+                n <<= 1;
+            }
+        }
+
+        let mut res = vec![Complex::ZERO; n];
+        self.fft_into(v, n, &mut res);
+        res
+    }
+
+    pub fn fft_into(&mut self, v: &[i32], mut n: usize, res: &mut [Complex<F>]) {
+        if n == 0 {
+            n = 1;
+            while n < v.len() {
+                n <<= 1;
+            }
+        }
+        debug_assert!(v.len() <= n);
+        self.bufs[0].clear();
+        self.bufs[0].resize(n, Complex::ZERO);
+        for (i, &x) in v.iter().enumerate() {
+            self.bufs[0][i].x = F::from_i32(x);
+        }
+        self.fft_internal::<0>(0, n, false);
+        res.iter_mut().zip(self.bufs[0].iter()).for_each(|(x, &y)| *x += y);
+    }
+
+    pub fn fft_inv(&mut self, v: &[Complex<F>]) -> Vec<i64> {
+        let mut res = vec![0; v.len()];
+        self.fft_inv_into(v, &mut res);
+        res
+    }
+
+    pub fn fft_inv_into(&mut self, v: &[Complex<F>], res: &mut [i64]) {
+        debug_assert!(!v.is_empty());
+        debug_assert!((v.len() & (v.len() - 1)) == 0);
+        self.bufs[0].clear();
+        self.bufs[0].resize(v.len(), Complex::ZERO);
+        for (i, &x) in v.iter().enumerate() {
+            self.bufs[0][i] = x;
+        }
+        self.fft_internal::<0>(0, v.len(), true);
+        res.iter_mut()
+            .zip(self.bufs[0].iter())
+            .for_each(|(x, &y)| *x += y.x.round().to_i64());
+    }
+
     pub fn multiply(&mut self, a: &[i32], b: &[i32]) -> Vec<i64> {
         if a.is_empty() || b.is_empty() {
             return vec![];
+        }
+        let mut res = vec![0; a.len() + b.len() - 1];
+        self.multiply_into(a, b, &mut res);
+        res
+    }
+
+    pub fn multiply_into(&mut self, a: &[i32], b: &[i32], res: &mut [i64]) {
+        if a.is_empty() || b.is_empty() {
+            return;
         }
         let mut n = 2;
         while n < a.len() + b.len() - 1 {
@@ -120,9 +179,9 @@ impl<F: Float> FFT<F> {
 
         self.fft_internal::<0>(0, n, true);
 
-        (0..(a.len() + b.len() - 1))
-            .map(|i| self.bufs[0][i].x.to_i64())
-            .collect()
+        res.iter_mut()
+            .zip((0..(a.len() + b.len() - 1)).map(|i| self.bufs[0][i].x.round().to_i64()))
+            .for_each(|(x, y)| *x += y);
     }
 }
 

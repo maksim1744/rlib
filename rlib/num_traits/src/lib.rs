@@ -82,6 +82,7 @@ pub trait Float:
     fn cos(&self) -> Self;
     fn sqrt(&self) -> Self;
     fn abs(&self) -> Self;
+    fn round(&self) -> Self;
 
     fn from_usize(x: usize) -> Self;
     fn from_i32(x: i32) -> Self;
@@ -193,6 +194,9 @@ macro_rules! impl_float {
             }
             fn abs(&self) -> Self {
                 <$t>::abs(*self)
+            }
+            fn round(&self) -> Self {
+                <$t>::round(*self)
             }
 
             fn from_usize(x: usize) -> Self {
