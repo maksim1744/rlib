@@ -12,6 +12,7 @@ fn simple() {
 
     assert_eq!(C::ZERO + C::ZERO, C::ZERO);
     assert_eq!(C::ONE * C::ONE, C::ONE);
+    assert_eq!(C::I * C::I + C::ONE, C::ZERO);
 
     let a = C::new(3., -4.);
     let b = C::new(-2., 10.);

@@ -9,6 +9,8 @@ pub struct Complex<F: Float> {
 }
 
 impl<F: Float> Complex<F> {
+    pub const I: Self = Complex::new(F::ZERO, F::ONE);
+
     pub const fn new(x: F, y: F) -> Self {
         Self { x, y }
     }

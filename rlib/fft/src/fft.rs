@@ -11,11 +11,13 @@ pub struct FFT<F: Float> {
 
 impl<F: Float> FFT<F> {
     pub fn new() -> Self {
-        Self {
+        let mut res = Self {
             w: vec![Complex::ONE, Complex::ONE],
             reversed: vec![0],
             bufs: [vec![], vec![]],
-        }
+        };
+        res.update_n(4);
+        res
     }
 
     pub fn update_n(&mut self, n: usize) {
@@ -120,15 +122,37 @@ impl<F: Float> FFT<F> {
     pub fn fft_inv_into(&mut self, v: &[Complex<F>], res: &mut [i64]) {
         debug_assert!(!v.is_empty());
         debug_assert!((v.len() & (v.len() - 1)) == 0);
-        self.bufs[0].clear();
-        self.bufs[0].resize(v.len(), Complex::ZERO);
-        for (i, &x) in v.iter().enumerate() {
-            self.bufs[0][i] = x;
+        let n = v.len();
+        if n == 1 {
+            if !res.is_empty() {
+                res[0] += v[0].x.round().to_i64();
+            }
+            return;
         }
-        self.fft_internal::<0>(0, v.len(), true);
+        let buf = &mut self.bufs[0];
+        buf.clear();
+        buf.resize(v.len(), Complex::ZERO);
+        for (i, &x) in v.iter().enumerate() {
+            buf[i] = x;
+        }
+        let i2 = F::ONE / F::from_usize(2);
+        let max_n = self.reversed.len();
+        let step = max_n / n;
+        let start = max_n - (max_n >> 2);
+        for i in 0..(n >> 1) {
+            let j = i + n / 2;
+            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * self.w[start - step * i]) * i2;
+        }
+
+        buf.truncate(n >> 1);
+        self.fft_internal::<0>(0, n >> 1, true);
         res.iter_mut()
-            .zip(self.bufs[0].iter())
-            .for_each(|(x, &y)| *x += y.x.round().to_i64());
+            .zip(
+                self.bufs[0]
+                    .iter()
+                    .flat_map(|c| [c.x.round().to_i64(), c.y.round().to_i64()]),
+            )
+            .for_each(|(x, y)| *x += y);
     }
 
     pub fn multiply(&mut self, a: &[i32], b: &[i32]) -> Vec<i64> {
@@ -162,25 +186,45 @@ impl<F: Float> FFT<F> {
         self.fft_internal::<0>(0, n, false);
         let buf = &mut self.bufs[0];
 
-        let i4 = F::ONE / F::from_usize(4);
         for i in 0..=(n >> 1) {
             // a --fft--> a1 + a2*i
             // b --fft--> b1 + b2*i
             // fact: FFT(a)[k] = FFT(a)[n - k].conj()
             // using this we can get formulas for FFT(a) and FFT(b) from FFT(a+bi)
+            // (some calculations are moved to the next for-loop for the purpose of optimization)
 
             let j = (n - i) & (n - 1);
-            let mut v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj()) * i4;
+            let mut v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj());
             std::mem::swap(&mut v.x, &mut v.y);
 
             buf[i] = v.conj();
             buf[j] = v;
         }
 
-        self.fft_internal::<0>(0, n, true);
+        // we know that Im(c)=0 and we know fft(c)
+        // let c' be (c[0]+c[1]*i)*x^0 + (c[2]+c[3]*i)*x^1 + (c[4]+c[5]*i)*x^2
+        // then c'(x^2) = (c(x) + c(-x)) / 2 + (c(x) - c(-x)) / 2x * i
+        // and knowing values of c at some x-s (which is precisely fft(c)), we can calculate fft(c')
+
+        let i8 = F::ONE / F::from_usize(8);
+        let max_n = self.reversed.len();
+        let step = max_n / n;
+        let start = max_n - (max_n >> 2);
+        for i in 0..(n >> 1) {
+            let j = i + (n >> 1);
+            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * self.w[start - step * i]) * i8;
+        }
+
+        buf.truncate(n >> 1);
+        self.fft_internal::<0>(0, n >> 1, true);
 
         res.iter_mut()
-            .zip((0..(a.len() + b.len() - 1)).map(|i| self.bufs[0][i].x.round().to_i64()))
+            .zip(
+                self.bufs[0]
+                    .iter()
+                    .flat_map(|c| [c.x.round().to_i64(), c.y.round().to_i64()]),
+            )
+            .take(a.len() + b.len() - 1)
             .for_each(|(x, y)| *x += y);
     }
 }

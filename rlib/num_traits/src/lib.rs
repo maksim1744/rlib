@@ -1,4 +1,5 @@
 use std::cmp::*;
+use std::fmt::{Debug, Display};
 use std::ops::*;
 
 pub trait ZeroOne {
@@ -31,6 +32,8 @@ pub trait Integer:
     + Clone
     + Sized
     + Default
+    + Display
+    + Debug
 {
     fn abs(&self) -> Self;
     fn into_abs(self) -> Self;
@@ -75,6 +78,8 @@ pub trait Float:
     + Copy
     + Default
     + Sized
+    + Display
+    + Debug
 {
     const PI: Self;
 

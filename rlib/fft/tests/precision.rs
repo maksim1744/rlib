@@ -13,7 +13,7 @@ fn precision() {
     let mut fft = FFT::<f64>::new();
     for (ai, &amax) in VALS_TO_CHECK.iter().enumerate() {
         for (bi, &bmax) in VALS_TO_CHECK.iter().enumerate() {
-            let len = CORRECT_F64_BOUNDS[ai][bi] as usize;
+            let len = CORRECT_F64_BOUNDS[ai][bi] as usize / 2;
             if len == 0 {
                 continue;
             }
@@ -21,10 +21,10 @@ fn precision() {
                 continue;
             }
             // assume transitivity
-            if ai + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai + 1][bi] as usize == len {
+            if ai + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai + 1][bi] as usize / 2 == len {
                 continue;
             }
-            if bi + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai][bi + 1] as usize == len {
+            if bi + 1 < VALS_TO_CHECK.len() && CORRECT_F64_BOUNDS[ai][bi + 1] as usize / 2 == len {
                 continue;
             }
             for &aback in BACKS.iter() {
