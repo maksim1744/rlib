@@ -1,7 +1,8 @@
 [package]
-name = "precision_tools"
+name = "fft_precision"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70.0"
 
 [dependencies]
 rlib_fft = { "path" = "../../rlib/fft" }
