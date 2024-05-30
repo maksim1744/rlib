@@ -221,6 +221,46 @@
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
 <a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>rlib_num_traits::{Float, ZeroOne};
 
 <span class="kw">use </span><span class="kw">crate</span>::Complex;
@@ -234,11 +274,13 @@
 
 <span class="kw">impl</span>&lt;F: Float&gt; FFT&lt;F&gt; {
     <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="self">Self </span>{
             w: <span class="macro">vec!</span>[Complex::ONE, Complex::ONE],
             reversed: <span class="macro">vec!</span>[<span class="number">0</span>],
             bufs: [<span class="macro">vec!</span>[], <span class="macro">vec!</span>[]],
-        }
+        };
+        res.update_n(<span class="number">4</span>);
+        res
     }
 
     <span class="kw">pub fn </span>update_n(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) {
@@ -343,15 +385,33 @@
     <span class="kw">pub fn </span>fft_inv_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>, v: <span class="kw-2">&amp;</span>[Complex&lt;F&gt;], res: <span class="kw-2">&amp;mut </span>[i64]) {
         <span class="macro">debug_assert!</span>(!v.is_empty());
         <span class="macro">debug_assert!</span>((v.len() &amp; (v.len() - <span class="number">1</span>)) == <span class="number">0</span>);
-        <span class="self">self</span>.bufs[<span class="number">0</span>].clear();
-        <span class="self">self</span>.bufs[<span class="number">0</span>].resize(v.len(), Complex::ZERO);
-        <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>x) <span class="kw">in </span>v.iter().enumerate() {
-            <span class="self">self</span>.bufs[<span class="number">0</span>][i] = x;
+        <span class="kw">let </span>n = v.len();
+        <span class="kw">if </span>n == <span class="number">1 </span>{
+            <span class="kw">if </span>!res.is_empty() {
+                res[<span class="number">0</span>] += v[<span class="number">0</span>].x.round().to_i64();
+            }
+            <span class="kw">return</span>;
         }
-        <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, v.len(), <span class="bool-val">true</span>);
+        <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span><span class="self">self</span>.bufs[<span class="number">0</span>];
+        buf.clear();
+        buf.resize(v.len(), Complex::ZERO);
+        <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>x) <span class="kw">in </span>v.iter().enumerate() {
+            buf[i] = x;
+        }
+        <span class="kw">let </span>i2 = F::ONE / F::from_usize(<span class="number">2</span>);
+        <span class="kw">let </span>max_n = <span class="self">self</span>.reversed.len();
+        <span class="kw">let </span>step = max_n / n;
+        <span class="kw">let </span>start = max_n - (max_n &gt;&gt; <span class="number">2</span>);
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..(n &gt;&gt; <span class="number">1</span>) {
+            <span class="kw">let </span>j = i + n / <span class="number">2</span>;
+            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * <span class="self">self</span>.w[start - step * i]) * i2;
+        }
+
+        buf.truncate(n &gt;&gt; <span class="number">1</span>);
+        <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n &gt;&gt; <span class="number">1</span>, <span class="bool-val">true</span>);
         res.iter_mut()
-            .zip(<span class="self">self</span>.bufs[<span class="number">0</span>].iter())
-            .for_each(|(x, <span class="kw-2">&amp;</span>y)| <span class="kw-2">*</span>x += y.x.round().to_i64());
+            .zip((<span class="number">0</span>..n).flat_map(|i| [<span class="self">self</span>.bufs[<span class="number">0</span>][i].x.round().to_i64(), <span class="self">self</span>.bufs[<span class="number">0</span>][i].y.round().to_i64()]))
+            .for_each(|(x, y)| <span class="kw-2">*</span>x += y);
     }
 
     <span class="kw">pub fn </span>multiply(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: <span class="kw-2">&amp;</span>[i32], b: <span class="kw-2">&amp;</span>[i32]) -&gt; Vec&lt;i64&gt; {
@@ -385,25 +445,45 @@
         <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n, <span class="bool-val">false</span>);
         <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span><span class="self">self</span>.bufs[<span class="number">0</span>];
 
-        <span class="kw">let </span>i4 = F::ONE / F::from_usize(<span class="number">4</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..=(n &gt;&gt; <span class="number">1</span>) {
             <span class="comment">// a --fft--&gt; a1 + a2*i
             // b --fft--&gt; b1 + b2*i
             // fact: FFT(a)[k] = FFT(a)[n - k].conj()
             // using this we can get formulas for FFT(a) and FFT(b) from FFT(a+bi)
+            // (some calculations are moved to the next for-loop for the purpose of optimization)
 
             </span><span class="kw">let </span>j = (n - i) &amp; (n - <span class="number">1</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj()) * i4;
+            <span class="kw">let </span><span class="kw-2">mut </span>v = (buf[i] + buf[j].conj()) * (buf[i] - buf[j].conj());
             std::mem::swap(<span class="kw-2">&amp;mut </span>v.x, <span class="kw-2">&amp;mut </span>v.y);
 
             buf[i] = v.conj();
             buf[j] = v;
         }
 
-        <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n, <span class="bool-val">true</span>);
+        <span class="comment">// we know that Im(c)=0 and we know fft(c)
+        // let c' be (c[0]+c[1]*i)*x^0 + (c[2]+c[3]*i)*x^1 + (c[4]+c[5]*i)*x^2
+        // then c'(x^2) = (c(x) + c(-x)) / 2 + (c(x) - c(-x)) / 2x * i
+        // and knowing values of c at some x-s (which is precisely fft(c)), we can calculate fft(c')
+
+        </span><span class="kw">let </span>i8 = F::ONE / F::from_usize(<span class="number">8</span>);
+        <span class="kw">let </span>max_n = <span class="self">self</span>.reversed.len();
+        <span class="kw">let </span>step = max_n / n;
+        <span class="kw">let </span>start = max_n - (max_n &gt;&gt; <span class="number">2</span>);
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..(n &gt;&gt; <span class="number">1</span>) {
+            <span class="kw">let </span>j = i + (n &gt;&gt; <span class="number">1</span>);
+            buf[i] = (buf[i] + buf[j] - (buf[i] - buf[j]) * <span class="self">self</span>.w[start - step * i]) * i8;
+        }
+
+        buf.truncate(n &gt;&gt; <span class="number">1</span>);
+        <span class="self">self</span>.fft_internal::&lt;<span class="number">0</span>&gt;(<span class="number">0</span>, n &gt;&gt; <span class="number">1</span>, <span class="bool-val">true</span>);
 
         res.iter_mut()
-            .zip((<span class="number">0</span>..(a.len() + b.len() - <span class="number">1</span>)).map(|i| <span class="self">self</span>.bufs[<span class="number">0</span>][i].x.round().to_i64()))
+            .zip(
+                <span class="self">self</span>.bufs[<span class="number">0</span>]
+                    .iter()
+                    .flat_map(|c| [c.x.round().to_i64(), c.y.round().to_i64()]),
+            )
+            .take(a.len() + b.len() - <span class="number">1</span>)
             .for_each(|(x, y)| <span class="kw-2">*</span>x += y);
     }
 }
