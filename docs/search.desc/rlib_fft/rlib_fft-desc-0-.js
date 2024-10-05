@@ -1,0 +1,1 @@
+searchState.loadedDescShard("rlib_fft", 0, "Returns the argument unchanged.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nCalls <code>U::from(self)</code>.\nTry some x-s and check that a(x) * b(x) == c(x)\nFor each pair of (A, B) from VALS_TO_CHECK this array …")

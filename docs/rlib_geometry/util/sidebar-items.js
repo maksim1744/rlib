@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["EPS"],"enum":["CircleIntersection","CircleLineIntersection"],"fn":["dist","intersect_cc","intersect_cl","intersect_ll","parallel"]};
