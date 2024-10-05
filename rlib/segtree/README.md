@@ -18,13 +18,11 @@ impl SegtreeItem for Item {
     }
 }
 
-fn main() {
-    let a = vec![1, 2, 3, 4, 5];
-    let mut tree = Segtree::from_iter(a.into_iter().map(|x| Item { x }));
-    assert_eq!(tree.ask(0, 2).x, 6); // ranges are inclusive: [l; r]
-    tree.set(1, Item { x: 10 });
-    assert_eq!(tree.ask(0, 2).x, 14);
-}
+let a = vec![1, 2, 3, 4, 5];
+let mut tree = Segtree::from_iter(a.into_iter().map(|x| Item { x }));
+assert_eq!(tree.ask(0, 2).x, 6); // ranges are inclusive: [l; r]
+tree.set(1, Item { x: 10 });
+assert_eq!(tree.ask(0, 2).x, 14);
 ```
 
 There are also default items for [sum](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.Sum.html), [min](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.Min.html) and [max](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.Max.html).
@@ -57,14 +55,12 @@ impl SegtreeItem<i16> for Item {
     }
 }
 
-fn main() {
-    let a = vec![3, 1, 2, 4, 5];
-    let mut tree = Segtree::from_iter(a.into_iter().map(|x| Item { x, md: 0 }));
-    assert_eq!(tree.ask(0, 2).x, 3);
-    tree.modify(1, 3, &100);
-    assert_eq!(tree.ask(0, 2).x, 102);
-    assert_eq!(tree.ask(0, 4).x, 104);
-}
+let a = vec![3, 1, 2, 4, 5];
+let mut tree = Segtree::from_iter(a.into_iter().map(|x| Item { x, md: 0 }));
+assert_eq!(tree.ask(0, 2).x, 3);
+tree.modify(1, 3, &100);
+assert_eq!(tree.ask(0, 2).x, 102);
+assert_eq!(tree.ask(0, 4).x, 104);
 ```
 
 There are also default items for the same set of queries as above plus addition on a segment: [SumAdd](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.SumAdd.html), [MinAdd](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.MinAdd.html) and [MaxAdd](https://maksim1744.github.io/rlib/rlib_segtree/segtree_items/struct.MaxAdd.html).
@@ -79,17 +75,15 @@ use rlib_segtree::segtree_items::{Combinator, MaxAdd, MinAdd};
 
 type MinMax = Combinator<MinAdd<i32>, MaxAdd<i32>>;
 
-fn main() {
-    let a = vec![3, 1, 2, 4, 5];
-    let mut tree = Segtree::from_iter(a.into_iter().map(MinMax::from)); // note that `from` is inherited from `MinAdd` and `MaxAdd`
-    let it = tree.ask(0, 2);
-    assert_eq!(it.0.v, 1);
-    assert_eq!(it.1.v, 3);
-    tree.modify(1, 4, &100);
-    let it = tree.ask(0, 4);
-    assert_eq!(it.0.v, 3);
-    assert_eq!(it.1.v, 105);
-}
+let a = vec![3, 1, 2, 4, 5];
+let mut tree = Segtree::from_iter(a.into_iter().map(MinMax::from)); // note that `from` is inherited from `MinAdd` and `MaxAdd`
+let it = tree.ask(0, 2);
+assert_eq!(it.0.v, 1);
+assert_eq!(it.1.v, 3);
+tree.modify(1, 4, &100);
+let it = tree.ask(0, 4);
+assert_eq!(it.0.v, 3);
+assert_eq!(it.1.v, 105);
 ```
 
 Note that one combinator can be used as a part for another combinator and so on. However, especially for lazy segtrees it comes at a cost of storing a separate modificator for each struct.

@@ -161,7 +161,7 @@ macro_rules! read_signed {
                         !reader.eof && !reader.peek().is_ascii_whitespace()
                     } {
                         debug_assert!(reader.buf[reader.begin].is_ascii_digit());
-                        result = result * 10 - (reader.buf[reader.begin] - ('0' as u8)) as $t;
+                        result = result * 10 - (reader.buf[reader.begin] - b'0') as $t;
                         reader.begin += 1;
                         read_something = true;
                     }
@@ -173,7 +173,7 @@ macro_rules! read_signed {
                         !reader.eof && !reader.peek().is_ascii_whitespace()
                     } {
                         debug_assert!(reader.buf[reader.begin].is_ascii_digit());
-                        result = result * 10 + (reader.buf[reader.begin] - ('0' as u8)) as $t;
+                        result = result * 10 + (reader.buf[reader.begin] - b'0') as $t;
                         reader.begin += 1;
                         read_something = true;
                     }
@@ -199,7 +199,7 @@ macro_rules! read_unsigned {
                     !reader.eof && !reader.peek().is_ascii_whitespace()
                 } {
                     debug_assert!(reader.buf[reader.begin].is_ascii_digit());
-                    result = result * 10 + (reader.buf[reader.begin] - ('0' as u8)) as $t;
+                    result = result * 10 + (reader.buf[reader.begin] - b'0') as $t;
                     reader.begin += 1;
                     read_something = true;
                 }
