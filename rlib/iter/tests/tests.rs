@@ -99,3 +99,36 @@ fn neighbours_8() {
     assert_eq!(iter_neighbours_8(10, 1, 0, 0).collect::<Vec<_>>(), vec![(1, 0)]);
     assert_eq!(iter_neighbours_8(1, 1, 0, 0).collect::<Vec<_>>(), Vec::new());
 }
+
+#[test]
+fn permutations() {
+    assert_eq!(
+        iter_permutations(Vec::<i32>::new()).collect::<Vec<_>>(),
+        vec![vec![]] as Vec<Vec<i32>>,
+    );
+    assert_eq!(iter_permutations(vec![6]).collect::<Vec<_>>(), vec![vec![6]]);
+    assert_eq!(
+        iter_permutations(vec![1, 2, 3]).collect::<Vec<_>>(),
+        vec![
+            vec![1, 2, 3],
+            vec![1, 3, 2],
+            vec![2, 1, 3],
+            vec![2, 3, 1],
+            vec![3, 1, 2],
+            vec![3, 2, 1]
+        ]
+    );
+    assert_eq!(
+        iter_permutations(vec![1, 2, 3]).collect::<Vec<_>>(),
+        iter_permutations(vec![3, 2, 1]).collect::<Vec<_>>()
+    );
+    let mut v = vec![1, 2, 3, 4, 5];
+    assert!(next_permutation(&mut v));
+    assert_eq!(v, vec![1, 2, 3, 5, 4]);
+    let mut v = vec![3, 5, 1, 4, 2];
+    assert!(next_permutation(&mut v));
+    assert_eq!(v, vec![3, 5, 2, 1, 4]);
+    let mut v = vec![5, 4, 3, 2, 1];
+    assert!(!next_permutation(&mut v));
+    assert_eq!(v, vec![1, 2, 3, 4, 5]);
+}
