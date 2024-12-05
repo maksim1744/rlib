@@ -82,6 +82,19 @@ fn neighbours_4() {
 }
 
 #[test]
+fn neighbours_4d() {
+    assert_eq!(
+        iter_neighbours_4d(10, 10, 5, 5).collect::<Vec<_>>(),
+        vec![(4, 6), (4, 4), (6, 4), (6, 6)]
+    );
+    assert_eq!(iter_neighbours_4d(10, 10, 0, 0).collect::<Vec<_>>(), vec![(1, 1)]);
+    assert_eq!(iter_neighbours_4d(10, 10, 9, 9).collect::<Vec<_>>(), vec![(8, 8)]);
+    assert_eq!(iter_neighbours_4d(1, 10, 0, 5).collect::<Vec<_>>(), Vec::new());
+    assert_eq!(iter_neighbours_4d(10, 1, 0, 0).collect::<Vec<_>>(), Vec::new());
+    assert_eq!(iter_neighbours_4d(1, 1, 0, 0).collect::<Vec<_>>(), Vec::new());
+}
+
+#[test]
 fn neighbours_8() {
     assert_eq!(
         iter_neighbours_8(10, 10, 5, 5).collect::<Vec<_>>(),
