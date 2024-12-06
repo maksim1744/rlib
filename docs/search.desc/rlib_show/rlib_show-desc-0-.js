@@ -1,0 +1,1 @@
+searchState.loadedDescShard("rlib_show", 0, "Show macro\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.")

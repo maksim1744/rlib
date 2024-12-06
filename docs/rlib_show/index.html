@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Show macro"><title>rlib_show - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rlib_show" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../rlib_show/index.html">rlib_<wbr>show</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#show-macro" title="Show macro">Show macro</a></li></ul><h3><a href="#macros">Crate Items</a></h3><ul class="block"><li><a href="#macros" title="Macros">Macros</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#statics" title="Statics">Statics</a></li><li><a href="#traits" title="Traits">Traits</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>rlib_show</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/rlib_show/lib.rs.html#1-109">source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="show-macro"><a class="doc-anchor" href="#show-macro">§</a>Show macro</h2>
+<p><a href="https://github.com/maksim1744/rlib/tree/main/rlib/show/tests"><img src="https://github.com/maksim1744/rlib/actions/workflows/ci.yml/badge.svg" alt="" /></a> <a href="https://maksim1744.github.io/rlib/rlib_show/index.html"><img src="https://img.shields.io/badge/Docs-github--pages-blue" alt="" /></a></p>
+<p>Provides macro <a href="rlib_show::show">show!</a> for debug prints. By default does nothing, to enable define environment variable <code>HOUSE</code> during compilation. Works for types that implement trait <a href="rlib_show::Show">Show</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
+
+<span class="kw">let </span>a: i32 = <span class="number">10</span>;
+<span class="macro">show!</span>(a);  <span class="comment">// [line_number]  [a: 10]
+</span><span class="kw">let </span>b: i32 = <span class="number">20</span>;
+<span class="macro">show!</span>(a, b);  <span class="comment">// [line_number]  [a: 10] [b: 20]
+</span><span class="macro">show!</span>(a + b);  <span class="comment">// [line_number]  [a + b: 30]
+</span><span class="kw">let </span>c: i32 = <span class="number">10i32</span>.pow(<span class="number">9</span>) * <span class="number">2</span>;
+<span class="macro">show!</span>(a, b, c);  <span class="comment">// [line_number]  [a: 10] [b: 20] [c: inf]
+
+</span><span class="kw">let </span>v = <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>], <span class="macro">vec!</span>[<span class="number">3</span>, <span class="number">4</span>]];
+<span class="macro">show!</span>(v);  <span class="comment">// [line_number]  [v: [[1, 2], [3, 4]]]</span></code></pre></div>
+<p>Some types also implement trait <a href="rlib_show::ShowPretty">ShowPretty</a> for pretty printing using macro <a href="rlib_show::show_pretty">show_pretty!</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
+
+<span class="kw">let </span>v = <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>], <span class="macro">vec!</span>[<span class="number">3</span>, <span class="number">4</span>]];
+<span class="macro">show_pretty!</span>(v);  <span class="comment">// [line_number]  [v: [[1, 2],
+                  //                     [3, 4]]]
+</span><span class="kw">let </span>m = std::collections::BTreeMap::from([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>)]);
+<span class="macro">show_pretty!</span>(v);  <span class="comment">// [line_number]  [m: {1: 2,
+                  //                     3: 4}]</span></code></pre></div>
+<p>For your own types you can either just implement <a href="rlib_show::Show">Show</a>, or use <a href="rlib_show::struct">show_struct</a> which essentially acts as <code>derive</code>, or use <a href="rlib_show::show_struct_debug">show_struct_debug</a> which uses <code>Debug</code> implementation to implement <a href="rlib_show::Show">Show</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
+
+<span class="kw">struct </span>S {
+    a: i32,
+    b: i64,
+}
+
+<span class="macro">show_struct!</span>(S, a, b);
+
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">struct </span>A {
+    a: i32,
+}
+
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">struct </span>B {
+    b: i32,
+}
+
+<span class="macro">show_struct_debug!</span>(A, B);</code></pre></div>
+<p>To configure how variables of some types are printed, use macro <a href="rust_show::show_cfg">show_cfg</a> to edit <a href="rlib_show::ShowSettings">settings</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
+
+<span class="kw">let </span>a: i32 = <span class="number">20</span>;
+<span class="macro">show!</span>(a);  <span class="comment">// [line_number]  [a: 20]
+</span><span class="macro">show_cfg!</span>(inf_32, <span class="number">10</span>);
+<span class="macro">show!</span>(a);  <span class="comment">// [line_number]  [a: inf]</span></code></pre></div>
+</div></details><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.is_show.html" title="macro rlib_show::is_show">is_show</a></div></li><li><div class="item-name"><a class="macro" href="macro.show.html" title="macro rlib_show::show">show</a></div></li><li><div class="item-name"><a class="macro" href="macro.show_cfg.html" title="macro rlib_show::show_cfg">show_<wbr>cfg</a></div></li><li><div class="item-name"><a class="macro" href="macro.show_pretty.html" title="macro rlib_show::show_pretty">show_<wbr>pretty</a></div></li><li><div class="item-name"><a class="macro" href="macro.show_struct.html" title="macro rlib_show::show_struct">show_<wbr>struct</a></div></li><li><div class="item-name"><a class="macro" href="macro.show_struct_debug.html" title="macro rlib_show::show_struct_debug">show_<wbr>struct_<wbr>debug</a></div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.ShowSettings.html" title="struct rlib_show::ShowSettings">Show<wbr>Settings</a></div></li></ul><h2 id="statics" class="section-header">Statics<a href="#statics" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="static" href="static.SHOW_SETTINGS.html" title="static rlib_show::SHOW_SETTINGS">SHOW_<wbr>SETTINGS</a></div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Show.html" title="trait rlib_show::Show">Show</a></div></li><li><div class="item-name"><a class="trait" href="trait.ShowPretty.html" title="trait rlib_show::ShowPretty">Show<wbr>Pretty</a></div></li></ul></section></div></main></body></html>

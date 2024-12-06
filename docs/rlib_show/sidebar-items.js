@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["is_show","show","show_cfg","show_pretty","show_struct","show_struct_debug"],"static":["SHOW_SETTINGS"],"struct":["ShowSettings"],"trait":["Show","ShowPretty"]};
