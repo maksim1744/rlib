@@ -24,7 +24,7 @@
 </span><span class="kw">let </span>m = std::collections::BTreeMap::from([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>)]);
 <span class="macro">show_pretty!</span>(v);  <span class="comment">// [line_number]  [m: {1: 2,
                   //                     3: 4}]</span></code></pre></div>
-<p>For your own types you can either just implement <a href="trait.Show.html" title="trait rlib_show::Show">Show</a>, or use <a href="struct">show_struct</a> which essentially acts as <code>derive</code>, or use <a href="macro.show_struct_debug.html" title="macro rlib_show::show_struct_debug">show_struct_debug</a> which uses <code>Debug</code> implementation to implement <a href="trait.Show.html" title="trait rlib_show::Show">Show</a>.</p>
+<p>For your own types you can either just implement <a href="trait.Show.html" title="trait rlib_show::Show">Show</a>, or use <a href="macro.show_struct.html" title="macro rlib_show::show_struct">show_struct</a> which essentially acts as <code>derive</code>, or use <a href="macro.show_struct_debug.html" title="macro rlib_show::show_struct_debug">show_struct_debug</a> which uses <code>Debug</code> implementation to implement <a href="trait.Show.html" title="trait rlib_show::Show">Show</a>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
 
@@ -46,7 +46,7 @@
 }
 
 <span class="macro">show_struct_debug!</span>(A, B);</code></pre></div>
-<p>To configure how variables of some types are printed, use macro <a href="rust_show::show_cfg">show_cfg</a> to edit <a href="struct.ShowSettings.html" title="struct rlib_show::ShowSettings">settings</a>.</p>
+<p>To configure how variables of some types are printed, use macro <a href="macro.show_cfg.html" title="macro rlib_show::show_cfg">show_cfg</a> to edit <a href="struct.ShowSettings.html" title="struct rlib_show::ShowSettings">settings</a>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rlib_show::<span class="kw-2">*</span>;
 
