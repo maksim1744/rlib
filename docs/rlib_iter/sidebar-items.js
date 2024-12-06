@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["iter_neighbours_4","iter_neighbours_8","iter_permutations","iter_submasks","iter_supermasks","next_permutation"]};
+window.SIDEBAR_ITEMS = {"fn":["iter_neighbours_4","iter_neighbours_4d","iter_neighbours_8","iter_permutations","iter_submasks","iter_supermasks","next_permutation"]};
