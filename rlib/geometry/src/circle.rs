@@ -1,3 +1,5 @@
+use rlib_show::show_struct;
+
 use crate::util::EPS;
 
 use super::point::Point;
@@ -31,3 +33,5 @@ impl Circle {
         }
     }
 }
+
+show_struct!(Circle, c, r);

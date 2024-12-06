@@ -1,3 +1,5 @@
+use rlib_show::show_struct;
+
 use crate::util::EPS;
 
 use super::point::Point;
@@ -38,3 +40,5 @@ impl Line {
         Point::new(self.a, self.b)
     }
 }
+
+show_struct!(Line, a, b, c);

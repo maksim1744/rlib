@@ -1,6 +1,7 @@
 use std::ops::*;
 
 use rlib_io::*;
+use rlib_show::{Show, ShowSettings};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Modular<const M: u32> {
@@ -147,3 +148,30 @@ impl<const M: u32> std::fmt::Debug for Modular<M> {
 
 pub type Mint998 = Modular<998244353>;
 pub type Mint107 = Modular<1000000007>;
+
+impl<const M: u32> Show for Modular<M> {
+    fn show(&self, settings: &ShowSettings) -> String {
+        let max_denominator = if settings.mint_rational {
+            settings.mint_max.min(Self::md() as i64 - 1)
+        } else {
+            1
+        };
+        for denominator in 1..=max_denominator {
+            for numerator in -settings.mint_max..=settings.mint_max {
+                if Self::new(numerator) / Self::new(denominator) == *self {
+                    if denominator == 1 {
+                        return numerator.to_string();
+                    } else {
+                        return format!("{}/{}", numerator, denominator);
+                    }
+                }
+            }
+        }
+
+        if settings.mint_max == 0 {
+            self.inner().to_string()
+        } else {
+            format!("?{}", self.inner())
+        }
+    }
+}

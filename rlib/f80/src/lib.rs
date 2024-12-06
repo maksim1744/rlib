@@ -9,6 +9,7 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 use std::cmp::Ordering;
 
 use rlib_num_traits::ZeroOne;
+use rlib_show::{Show, ShowSettings};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(align(16))]
@@ -236,5 +237,11 @@ impl std::fmt::Display for f80 {
 impl std::fmt::Debug for f80 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f64::from(*self).fmt(f)
+    }
+}
+
+impl Show for f80 {
+    fn show(&self, settings: &ShowSettings) -> String {
+        f64::from(*self).show(settings)
     }
 }

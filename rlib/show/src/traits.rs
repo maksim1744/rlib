@@ -5,6 +5,8 @@ pub struct ShowSettings {
     pub float_precision: usize,
     pub item_width: usize,
     pub colors: bool,
+    pub mint_max: i64,
+    pub mint_rational: bool,
 }
 
 impl ShowSettings {
@@ -16,6 +18,8 @@ impl ShowSettings {
             float_precision: 9,
             item_width: 0,
             colors: true,
+            mint_max: 100,
+            mint_rational: true,
         }
     }
 }

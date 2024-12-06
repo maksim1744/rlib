@@ -1,4 +1,5 @@
 use rlib_mint::*;
+use rlib_show::{Show, ShowSettings};
 
 #[test]
 fn small_mod() {
@@ -113,4 +114,19 @@ fn big_mod() {
             }
         }
     }
+}
+
+#[test]
+fn format() {
+    type Mint = Mint998;
+    let settings = ShowSettings::new();
+
+    assert_eq!(Mint::new(0).show(&settings), "0");
+    assert_eq!(Mint::new(1).show(&settings), "1");
+    assert_eq!(Mint::new(-1).show(&settings), "-1");
+    assert_eq!(Mint::new(42).show(&settings), "42");
+    assert_eq!(Mint::new(-42).show(&settings), "-42");
+    assert_eq!((Mint::new(5) / Mint::new(3)).show(&settings), "5/3");
+    assert_eq!((Mint::new(-5) / Mint::new(3)).show(&settings), "-5/3");
+    assert_eq!(Mint::new(167239283).show(&settings), "?167239283");
 }

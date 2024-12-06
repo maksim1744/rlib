@@ -3,6 +3,8 @@ use std::{
     ops::{Add, Div, Mul, Sub},
 };
 
+use rlib_show::{Show, ShowSettings};
+
 #[derive(Copy, Clone, Default, PartialEq)]
 pub struct Point {
     pub x: f64,
@@ -40,6 +42,12 @@ impl Point {
 
     pub fn cp(&self, p: &Point) -> f64 {
         self.x * p.y - self.y * p.x
+    }
+}
+
+impl Show for Point {
+    fn show(&self, settings: &ShowSettings) -> String {
+        format!("({}, {})", self.x.show(settings), self.y.show(settings))
     }
 }
 

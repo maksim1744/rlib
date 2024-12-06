@@ -7,6 +7,7 @@ license = "MIT"
 rust-version = "1.57.0"
 
 [dependencies]
+rlib_show = { path = "../show" }
 
 [dev-dependencies]
 rlib_rand = { path = "../rand" }

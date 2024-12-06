@@ -5,6 +5,7 @@ use std::{
 
 use rlib_gcd::*;
 use rlib_num_traits::*;
+use rlib_show::{Show, ShowSettings};
 
 pub trait SignedInteger: Integer + Neg<Output = Self> {}
 impl<T: Integer + Neg<Output = Self>> SignedInteger for T {}
@@ -181,5 +182,11 @@ impl<T: SignedInteger> Ord for Rational<T> {
 impl<T: SignedInteger> PartialOrd for Rational<T> {
     fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
         Some(self.cmp(rhs))
+    }
+}
+
+impl<T: Show> Show for Rational<T> {
+    fn show(&self, settings: &ShowSettings) -> String {
+        format!("{}/{}", self.a.show(settings), self.b.show(settings))
     }
 }
