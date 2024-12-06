@@ -12,11 +12,7 @@ fn double_multiply(fft: &mut FFT<f64>, a: &[i32], b: &[i32]) -> Vec<i64> {
     }
     let fft_a = fft.fft(a, n);
     let fft_b = fft.fft(b, n);
-    let fft_c = fft_a
-        .into_iter()
-        .zip(fft_b.into_iter())
-        .map(|(x, y)| x * y)
-        .collect::<Vec<_>>();
+    let fft_c = fft_a.into_iter().zip(fft_b).map(|(x, y)| x * y).collect::<Vec<_>>();
     let mut c2 = fft.fft_inv(&fft_c);
     c2.truncate(a.len() + b.len() - 1);
     assert_eq!(c, c2);

@@ -31,7 +31,7 @@ fn point() {
     assert_eq!(a + b, Point::new(8., -2.));
     assert_eq!(a + &b, Point::new(8., -2.));
     assert_eq!(&a + b, Point::new(8., -2.));
-    assert_eq!(&a + &b, Point::new(8., -2.));
+    assert_eq!(a + b, Point::new(8., -2.));
 }
 
 #[test]

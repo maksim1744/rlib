@@ -149,7 +149,7 @@ fn substring() {
         for _ in 0..its {
             if rng.next(0..2) == 0 {
                 let ind = rng.next(0..n);
-                let val = char::from_u32(rng.next(0..26 as u32) + ('a' as u32)).unwrap();
+                let val = char::from_u32(rng.next(0..26_u32) + ('a' as u32)).unwrap();
                 ar[ind] = val.to_string();
                 tree.set(ind, StringSum::new(val));
             } else {

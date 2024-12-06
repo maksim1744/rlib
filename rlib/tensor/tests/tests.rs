@@ -3,9 +3,7 @@ use rlib_io::writer::{Writable, Writer};
 use rlib_tensor::Tensor;
 
 fn make_reader(s: &str) -> Reader {
-    Reader::new(Box::new(std::io::Cursor::new(
-        s.as_bytes().iter().cloned().collect::<Vec<u8>>(),
-    )))
+    Reader::new(Box::new(std::io::Cursor::new(s.as_bytes().to_vec())))
 }
 
 fn write<T: Writable>(t: T) -> String {

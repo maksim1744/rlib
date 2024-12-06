@@ -15,7 +15,7 @@ fn min_prime() {
         while i % p != 0 {
             p += 1;
         }
-        assert_eq!(p, sieve.min_prime(i as i32));
+        assert_eq!(p, sieve.min_prime(i));
     }
 }
 
@@ -29,7 +29,7 @@ fn is_prime() {
         while i % p != 0 {
             p += 1;
         }
-        assert_eq!(p == i, sieve.is_prime(i as i32));
+        assert_eq!(p == i, sieve.is_prime(i));
     }
 }
 

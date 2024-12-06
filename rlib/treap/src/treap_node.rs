@@ -13,6 +13,7 @@ static mut RNG: Rng = Rng::from_seed(42);
 
 type Priority = u32;
 
+#[allow(static_mut_refs)]
 fn gen_priority() -> Priority {
     unsafe { RNG.next_raw() as Priority }
 }

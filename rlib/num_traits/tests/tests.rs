@@ -25,12 +25,12 @@ fn base_10_len() {
 
 #[test]
 fn abs() {
-    assert_eq!(((-128) as i8).unsigned_abs(), 128 as u8);
-    assert_eq!(((-42) as i8).unsigned_abs(), 42 as u8);
-    assert_eq!((42 as i8).unsigned_abs(), 42 as u8);
-    assert_eq!((127 as i8).unsigned_abs(), 127 as u8);
+    assert_eq!((-128_i8).unsigned_abs(), 128_u8);
+    assert_eq!((-42_i8).unsigned_abs(), 42_u8);
+    assert_eq!(42_i8.unsigned_abs(), 42_u8);
+    assert_eq!(127_i8.unsigned_abs(), 127_u8);
 
-    assert_eq!((0 as u8).unsigned_abs(), 0 as u8);
-    assert_eq!((42 as u8).unsigned_abs(), 42 as u8);
-    assert_eq!((255 as u8).unsigned_abs(), 255 as u8);
+    assert_eq!(0_u8.unsigned_abs(), 0_u8);
+    assert_eq!(42_u8.unsigned_abs(), 42_u8);
+    assert_eq!(255_u8.unsigned_abs(), 255_u8);
 }

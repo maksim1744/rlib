@@ -1,9 +1,7 @@
 use rlib_io::reader::{Readable, Reader};
 
 fn make_reader(s: &str) -> Reader {
-    Reader::new(Box::new(std::io::Cursor::new(
-        s.as_bytes().iter().cloned().collect::<Vec<u8>>(),
-    )))
+    Reader::new(Box::new(std::io::Cursor::new(s.as_bytes().to_vec())))
 }
 
 #[test]

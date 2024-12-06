@@ -53,7 +53,7 @@ where
     }
 }
 
-impl<'a, T> fmt::Debug for TreePrinter<'a, T>
+impl<T> fmt::Debug for TreePrinter<'_, T>
 where
     T: TreapItem + fmt::Debug,
 {

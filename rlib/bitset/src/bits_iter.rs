@@ -9,7 +9,7 @@ impl<'a, const N: usize> BitsIter<'a, N> {
     }
 }
 
-impl<'a, const N: usize> std::iter::Iterator for BitsIter<'a, N> {
+impl<const N: usize> std::iter::Iterator for BitsIter<'_, N> {
     type Item = usize;
     fn next(&mut self) -> Option<Self::Item> {
         while self.idx < self.data.len() * 64 && (self.data[self.idx / 64] >> (self.idx % 64)) == 0 {

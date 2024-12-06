@@ -70,7 +70,7 @@ fn vec() {
 
 #[test]
 fn tuple() {
-    assert_eq!(&write((200 as u8, "hello", -111 as i8)), "200 hello -111");
+    assert_eq!(&write((200_u8, "hello", -111_i8)), "200 hello -111");
     // up to 8 items
     assert_eq!(write((1, 2, 3, 4, 5, 6, 7, 8)), "1 2 3 4 5 6 7 8");
 }

@@ -3,7 +3,7 @@ pub struct PrimeIter<'a> {
     n: i32,
 }
 
-impl<'a> Iterator for PrimeIter<'a> {
+impl Iterator for PrimeIter<'_> {
     type Item = (i32, i32);
     fn next(&mut self) -> Option<Self::Item> {
         if self.n == 1 {
