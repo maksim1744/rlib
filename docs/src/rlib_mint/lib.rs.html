@@ -147,9 +147,38 @@
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::<span class="kw-2">*</span>;
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::<span class="kw-2">*</span>;
 
 <span class="kw">use </span>rlib_io::<span class="kw-2">*</span>;
+<span class="kw">use </span>rlib_show::{Show, ShowSettings};
 
 <span class="attr">#[derive(Copy, Clone, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>Modular&lt;<span class="kw">const </span>M: u32&gt; {
@@ -296,4 +325,31 @@
 
 <span class="kw">pub type </span>Mint998 = Modular&lt;<span class="number">998244353</span>&gt;;
 <span class="kw">pub type </span>Mint107 = Modular&lt;<span class="number">1000000007</span>&gt;;
+
+<span class="kw">impl</span>&lt;<span class="kw">const </span>M: u32&gt; Show <span class="kw">for </span>Modular&lt;M&gt; {
+    <span class="kw">fn </span>show(<span class="kw-2">&amp;</span><span class="self">self</span>, settings: <span class="kw-2">&amp;</span>ShowSettings) -&gt; String {
+        <span class="kw">let </span>max_denominator = <span class="kw">if </span>settings.mint_rational {
+            settings.mint_max.min(<span class="self">Self</span>::md() <span class="kw">as </span>i64 - <span class="number">1</span>)
+        } <span class="kw">else </span>{
+            <span class="number">1
+        </span>};
+        <span class="kw">for </span>denominator <span class="kw">in </span><span class="number">1</span>..=max_denominator {
+            <span class="kw">for </span>numerator <span class="kw">in </span>-settings.mint_max..=settings.mint_max {
+                <span class="kw">if </span><span class="self">Self</span>::new(numerator) / <span class="self">Self</span>::new(denominator) == <span class="kw-2">*</span><span class="self">self </span>{
+                    <span class="kw">if </span>denominator == <span class="number">1 </span>{
+                        <span class="kw">return </span>numerator.to_string();
+                    } <span class="kw">else </span>{
+                        <span class="kw">return </span><span class="macro">format!</span>(<span class="string">"{}/{}"</span>, numerator, denominator);
+                    }
+                }
+            }
+        }
+
+        <span class="kw">if </span>settings.mint_max == <span class="number">0 </span>{
+            <span class="self">self</span>.inner().to_string()
+        } <span class="kw">else </span>{
+            <span class="macro">format!</span>(<span class="string">"?{}"</span>, <span class="self">self</span>.inner())
+        }
+    }
+}
 </code></pre></div></section></main></body></html>
