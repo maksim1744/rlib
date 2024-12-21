@@ -64,6 +64,18 @@ impl Show for String {
     }
 }
 
+impl Show for char {
+    fn show(&self, _settings: &ShowSettings) -> String {
+        format!("'{}'", self)
+    }
+}
+
+impl Show for bool {
+    fn show(&self, _settings: &ShowSettings) -> String {
+        if *self { "true" } else { "false" }.to_string()
+    }
+}
+
 impl<T: Show> Show for [T] {
     fn show(&self, settings: &ShowSettings) -> String {
         let mut res = "[".to_string();

@@ -90,6 +90,14 @@ fn strings() {
     assert_eq!(a.as_str().show(&settings), fmt(&a));
     assert_eq!("hello".show(&settings), fmt("hello"));
     assert_eq!(a[2..4].show(&settings), fmt("er"));
+    assert_eq!(['a', 'b'].show(&settings), "['a', 'b']");
+}
+
+#[test]
+fn bools() {
+    let settings = ShowSettings::new();
+    assert_eq!(true.show(&settings), "true");
+    assert_eq!(false.show(&settings), "false");
 }
 
 #[test]
