@@ -1,6 +1,22 @@
+use std::time::SystemTime;
+
 use crate::randomable::*;
 
 pub trait Rand {
+    fn from_seed(seed: u64) -> Self;
+
+    fn from_time() -> Self
+    where
+        Self: Sized,
+    {
+        Self::from_seed(
+            SystemTime::now()
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos() as u64,
+        )
+    }
+
     fn next<T, R>(&mut self, range: R) -> T
     where
         R: Randomable<T>;

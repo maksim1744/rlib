@@ -9,7 +9,7 @@ pub trait TreapItemSized {
     fn size(&self) -> usize;
 }
 
-static mut RNG: Rng = Rng::from_seed(42);
+static mut RNG: Rng = Rng::new(42);
 
 type Priority = u32;
 

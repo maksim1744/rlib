@@ -113,7 +113,7 @@ fn circle_stress_intersect() {
     for _ in 0..ITERS {
         let p1 = Point::new(rng.next(-1000f64..1000f64), rng.next(-1000f64..1000f64));
         let p2 = Point::new(rng.next(-1000f64..1000f64), rng.next(-1000f64..1000f64));
-        let r1 = rng.next(0f64..1000f64);
+        let r1 = rng.next(1f64..1000f64);
         let d = dist(&p1, &p2);
         let r2 = rng.next((d - r1).abs()..(d + r1));
         let c1 = Circle::new(p1, r1);

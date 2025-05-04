@@ -175,3 +175,22 @@ fn shuffle() {
     // EV is 1
     assert!(cnt <= 5);
 }
+
+#[test]
+fn period() {
+    const ITERS: usize = 100000;
+    for seed in [0, 1, 42] {
+        for bit in 0..64 {
+            let mut rng = Rng::from_seed(seed);
+            let seq = (0..ITERS + 1).map(|_| (rng.next_raw() >> bit) & 1).collect::<Vec<_>>();
+            for p in 1..=8 {
+                let mut cnt = [0usize; 2];
+                for i in p..seq.len() {
+                    cnt[(seq[i] == seq[i - p]) as usize] += 1;
+                }
+                let tot = seq.len() - p;
+                assert!(*cnt.iter().min().unwrap() >= tot / 2 / 10 * 9);
+            }
+        }
+    }
+}
