@@ -38,13 +38,13 @@ macro_rules! show_pretty {
             #[allow(static_mut_refs)]
             let settings = unsafe { &rlib_show::SHOW_SETTINGS };
             let mut line = format!("[{:>3}] ", line!());
+            let var = stringify!($arg);
+            let ident = line.len() + var.len() + 4;
             if settings.colors {
                 line = format!("\x1b[34m{}\x1b[0m", line);
             }
             eprint!("{}", line);
             let out = $arg.show_pretty(settings);
-            let var = stringify!($arg);
-            let ident = line.len() + var.len() + 5;
             let lines = out.lines().collect::<Vec<_>>();
             for (i, line) in lines.iter().enumerate() {
                 if i == 0 {
