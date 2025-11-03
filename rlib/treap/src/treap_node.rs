@@ -47,23 +47,25 @@ where
         );
     }
 
-    pub fn merge(mut left: Option<Box<Self>>, mut right: Option<Box<Self>>) -> Option<Box<Self>> {
-        if left.is_none() {
-            right
-        } else if right.is_none() {
-            left
-        } else if left.as_ref().unwrap().priority < right.as_ref().unwrap().priority {
-            left.as_mut().unwrap().push();
-            let m = left.as_mut().unwrap().right.take();
-            left.as_mut().unwrap().right = Self::merge(m, right);
-            left.as_mut().unwrap().update();
-            left
-        } else {
-            right.as_mut().unwrap().push();
-            let m = right.as_mut().unwrap().left.take();
-            right.as_mut().unwrap().left = Self::merge(left, m);
-            right.as_mut().unwrap().update();
-            right
+    pub fn merge(left: Option<Box<Self>>, right: Option<Box<Self>>) -> Option<Box<Self>> {
+        match (left, right) {
+            (left, None) => left,
+            (None, right) => right,
+            (Some(mut left), Some(mut right)) => {
+                if left.priority < right.priority {
+                    left.push();
+                    let m = left.right.take();
+                    left.right = Self::merge(m, Some(right));
+                    left.update();
+                    Some(left)
+                } else {
+                    right.push();
+                    let m = right.left.take();
+                    right.left = Self::merge(Some(left), m);
+                    right.update();
+                    Some(right)
+                }
+            }
         }
     }
 

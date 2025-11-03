@@ -38,7 +38,7 @@ impl<const N: usize> Bitset<N> {
         self.data.fill(0);
     }
 
-    pub fn iter_bits(&self) -> BitsIter<N> {
+    pub fn iter_bits(&self) -> BitsIter<'_, N> {
         BitsIter::new(&self.data)
     }
 

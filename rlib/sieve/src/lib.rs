@@ -61,7 +61,7 @@ impl Sieve {
         &self.primes
     }
 
-    pub fn factorize(&self, n: i32) -> PrimeIter {
+    pub fn factorize(&self, n: i32) -> PrimeIter<'_> {
         PrimeIter { sieve: self, n }
     }
 }
